@@ -28,7 +28,10 @@ function handle_booking_form()
         // Process form submission here
     } else {
         // Block submission or return an error
-        trigger_error('Booking Form submission error: Rate limit exceeded.', E_USER_ERROR);
+        $numofsubmissions = count($_SESSION['submissions']);
+        $ratelimitreset = $time_frame - ($submission_time - $_SESSION['submissions'][0]);
+        trigger_error('booking form rate limit hit, num of submissions in timit limit: ' . $numofsubmissions . '. rate limit resets in ' . $ratelimitreset . ' seconds', E_USER_ERROR);
+
         echo "You're doing that too much. Please try again later.";
     }
 

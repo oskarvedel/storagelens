@@ -75,7 +75,7 @@ function populateDates() {
     }
 
     const futureDateOption = document.createElement("option");
-    futureDateOption.textContent = "Fremtidig Dato";
+    futureDateOption.textContent = "Anden Dato";
     futureDateOption.dataset.value = "future";
     optionsContainer.appendChild(futureDateOption);
   });

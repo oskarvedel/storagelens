@@ -2,6 +2,7 @@
 
 function handle_booking_form()
 {
+    xdebug_break();
     session_start();
 
     //rate limit form submissions
@@ -22,15 +23,15 @@ function handle_booking_form()
         }
     }
 
-    // Check rate limit
-    if (count($_SESSION['submissions']) < $limit) {
-        $_SESSION['submissions'][] = $submission_time;
-        // Process form submission here
-    } else {
-        // Block submission or return an error
-        trigger_error('Booking Form submission error: Rate limit exceeded.', E_USER_ERROR);
-        echo "You're doing that too much. Please try again later.";
-    }
+    // // Check rate limit
+    // if (count($_SESSION['submissions']) < $limit) {
+    //     $_SESSION['submissions'][] = $submission_time;
+    //     // Process form submission here
+    // } else {
+    //     // Block submission or return an error
+    //     trigger_error('Booking Form submission error: Rate limit exceeded.', E_USER_ERROR);
+    //     echo "You're doing that too much. Please try again later.";
+    // }
 
     $unit_id = $_POST['unit_id'];
 
@@ -157,8 +158,7 @@ function get_move_in_date($post)
 {
     if ($post['move_in_date'] == "future") {
         $move_in_date_unknown = true;
-        $move_in_date = new DateTime('3000-01-01');
-        $move_in_date = $move_in_date->format('m-d-Y');
+        $move_in_date = "";
     } else {
         $move_in_date_unknown = false;
         $move_in_date = new DateTime($post['move_in_date']);
@@ -176,7 +176,7 @@ function construct_move_in_date_string($move_in_date)
     // Check if the move-in date is unknown
     if (!empty($move_in_date[1]) && $move_in_date[1]) {
         // If move-in date is marked as unknown
-        return "Kunden har ikke angivet indflytningsdato";
+        return "Indflytningsdato ikke angivet";
     }
     //replace - with / in the date
     $move_in_date = str_replace('-', '/', $move_in_date[0]);

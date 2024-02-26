@@ -22,15 +22,15 @@ function handle_booking_form()
         }
     }
 
-    // // Check rate limit
-    // if (count($_SESSION['submissions']) < $limit) {
-    //     $_SESSION['submissions'][] = $submission_time;
-    //     // Process form submission here
-    // } else {
-    //     // Block submission or return an error
-    //     trigger_error('Booking Form submission error: Rate limit exceeded.', E_USER_ERROR);
-    //     echo "You're doing that too much. Please try again later.";
-    // }
+    // Check rate limit
+    if (count($_SESSION['submissions']) < $limit) {
+        $_SESSION['submissions'][] = $submission_time;
+        // Process form submission here
+    } else {
+        // Block submission or return an error
+        trigger_error('Booking Form submission error: Rate limit exceeded.', E_USER_ERROR);
+        echo "You're doing that too much. Please try again later.";
+    }
 
     $unit_id = $_POST['unit_id'];
 

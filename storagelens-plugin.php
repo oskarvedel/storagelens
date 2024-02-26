@@ -43,7 +43,7 @@ function register_tdp_menu_page()
         __('TDP plugin', 'textdomain'), // Page title
         __('TDP plugin', 'textdomain'),     // Menu title
         'manage_options',                      // Capability
-        'tdp-plugin',                       // Menu slug
+        'storagelens-plugin',                       // Menu slug
         'tdp_menu_page',                 // Function to display the page
         'dashicons-admin-generic',             // Icon URL
         6                                      // Position

@@ -25,18 +25,18 @@ function handle_booking_form()
     //get the time of the first submission in the session
     $sessionstarttime = reset($_SESSION['submissions']);
 
-    // Check rate limit
-    if (count($_SESSION['submissions']) < $limit) {
-        $_SESSION['submissions'][] = $submission_time;
-        // Process form submission here
-    } else {
-        // Block submission or return an error
-        $numofsubmissions = count($_SESSION['submissions']);
-        $ratelimitresettime = $time_frame - ($submission_time - $sessionstarttime);
-        trigger_error('booking form session rate limit hit, num of submissions in time limit: ' . $numofsubmissions . '. rate limit resets in ' . $ratelimitresettime . ' seconds', E_USER_ERROR);
+    // // Check rate limit
+    // if (count($_SESSION['submissions']) < $limit) {
+    //     $_SESSION['submissions'][] = $submission_time;
+    //     // Process form submission here
+    // } else {
+    //     // Block submission or return an error
+    //     $numofsubmissions = count($_SESSION['submissions']);
+    //     $ratelimitresettime = $time_frame - ($submission_time - $sessionstarttime);
+    //     trigger_error('booking form session rate limit hit, num of submissions in time limit: ' . $numofsubmissions . '. rate limit resets in ' . $ratelimitresettime . ' seconds', E_USER_ERROR);
 
-        echo "You're doing that too much. Please try again later.";
-    }
+    //     echo "You're doing that too much. Please try again later.";
+    // }
 
     $unit_id = $_POST['unit_id'];
 

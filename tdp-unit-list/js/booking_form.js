@@ -96,7 +96,7 @@ document.addEventListener("DOMContentLoaded", function () {
         var date_dropdown = form.querySelector(".custom-select__trigger");
         if (date_dropdown.value === "Vælg en dato") {
           event.preventDefault();
-          console.log("unhid error message");
+          // console.log("unhid error message");
           var date_error_message = form.querySelector(".error-message");
           date_error_message.style.display = "block";
           dateSelected = false;
@@ -181,91 +181,6 @@ document.addEventListener("DOMContentLoaded", function () {
         booking_request.send(bookingFormData);
       });
     });
-
-    //       var dateSelected = true;
-
-    //       //get the date_dropdown in this instance of the booking_form
-    //       var date_dropdown = form.querySelector(".custom-select__trigger");
-    //       if (date_dropdown.value === "Vælg en dato") {
-    //         event.preventDefault();
-    //         console.log("unhid error message");
-    //         var date_error_message = form.querySelector(".error-message");
-    //         date_error_message.style.display = "block";
-    //         dateSelected = false;
-    //       }
-
-    //       if (!dateSelected) return;
-
-    //       var bookingFormData = new FormData(form);
-
-    //       $unit_id = bookingFormData.get("unit_id");
-
-    //       var enable_direct_booking =
-    //         bookingFormData.get("enable_direct_booking") === "1";
-
-    //       console.log("Enable direct booking: ", enable_direct_booking);
-
-    //       if (enable_direct_booking) {
-    //         var booking_link = bookingFormData.get("booking_link");
-    //       }
-
-    //       console.log("Submitting form with data: ", bookingFormData);
-
-    //       var booking_request = new XMLHttpRequest();
-    //       booking_request.open("POST", "/wp-admin/admin-ajax.php", true);
-    //       booking_request.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-    //       bookingFormData.append("action", "booking_form_action"); // Action hook name
-    //       bookingFormData.append("nonce", nonce);
-
-    //       booking_request.onload = function () {
-    //         if (this.status >= 200 && this.status < 400) {
-    //           // Handle the response from the php form handler
-    //           var resp = JSON.parse(this.response);
-    //           if (resp.success === true) {
-    //             // The PHP script returned success
-    //             if (enable_direct_booking) {
-    //               if (booking_link) {
-    //                 // console.log("Redirecting to booking link");
-    //                 window.location.href = booking_link;
-    //                 return;
-    //               } else {
-    //                 var errorXhr = new XMLHttpRequest();
-    //                 errorXhr.open("POST", "/wp-admin/admin-ajax.php", true);
-    //                 errorXhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-    //                 var errorFormData = new FormData();
-    //                 errorFormData.append("error_message", "no_booking_link");
-    //                 errorFormData.append("unit_id", bookingFormData.get("unit_id"));
-    //                 errorFormData.append("action", "javascript_error_action"); // Action hook name
-
-    //                 errorXhr.send(errorFormData);
-
-    //                 window.location.href =
-    //                   "/reservation/confirmation/" + resp.booking_id;
-    //               }
-    //             } else {
-    //               console.log(
-    //                 "Direct booking disabled, redirecting to thank you page"
-    //               );
-    //               window.location.href =
-    //                 "/reservation/confirmation/" + resp.booking_id;
-    //             }
-    //           }
-    //         } else {
-    //           var errorXhr = new XMLHttpRequest();
-    //           errorXhr.open("POST", "/wp-admin/admin-ajax.php", true);
-    //           errorXhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
-
-    //           var errorFormData = new FormData();
-    //           errorFormData.append("error_message", "undefined_booking_error");
-    //           errorFormData.append("unit_id", bookingFormData.get("unit_id"));
-    //           errorFormData.append("action", "javascript_error_action"); // Action hook name
-
-    //           errorXhr.send(errorFormData);
-    //         }
-    //       };
-    //       booking_request.send(bookingFormData);
-    //     });
   });
 });
 
@@ -328,12 +243,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
   booking_forms.forEach((booking_form) => {
     booking_form.addEventListener("submit", function () {
-      // Disable all submit buttons
-      submitButtons.forEach((button) => {
-        button.disabled = true;
-        button.value = "Arbejder...";
-        button.style.backgroundColor = "#B2B2B2";
-      });
+      var dateSelected = true;
+
+      //get the date_dropdown in this instance of the booking_form
+      var date_dropdown = booking_form.querySelector(".custom-select__trigger");
+      if (date_dropdown.value === "Vælg en dato") {
+        dateSelected = false;
+        console.log("Date not selected");
+      }
+
+      if (!dateSelected) {
+      } else {
+        // Disable all submit buttons
+        submitButtons.forEach((button) => {
+          button.disabled = true;
+          button.value = "Arbejder...";
+          button.style.backgroundColor = "#B2B2B2";
+        });
+      }
     });
   });
 });

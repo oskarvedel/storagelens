@@ -2,6 +2,7 @@
 
 function handle_booking_form()
 {
+    xdebug_break();
     session_start();
 
     //rate limit form submissions
@@ -22,6 +23,9 @@ function handle_booking_form()
         }
     }
 
+    //get the time of the first submission in the session
+    $sessionstarttime = reset($_SESSION['submissions']);
+
     // Check rate limit
     if (count($_SESSION['submissions']) < $limit) {
         $_SESSION['submissions'][] = $submission_time;
@@ -29,8 +33,8 @@ function handle_booking_form()
     } else {
         // Block submission or return an error
         $numofsubmissions = count($_SESSION['submissions']);
-        $ratelimitreset = $time_frame - ($submission_time - $_SESSION['submissions'][0]);
-        trigger_error('booking form rate limit hit, num of submissions in timit limit: ' . $numofsubmissions . '. rate limit resets in ' . $ratelimitreset . ' seconds', E_USER_ERROR);
+        $ratelimitresettime = $time_frame - ($submission_time - $sessionstarttime);
+        trigger_error('booking form session rate limit hit, num of submissions in time limit: ' . $numofsubmissions . '. rate limit resets in ' . $ratelimitresettime . ' seconds', E_USER_ERROR);
 
         echo "You're doing that too much. Please try again later.";
     }

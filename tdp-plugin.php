@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Plugin Name: tdp plugin
+ * Plugin Name: storagelens
  * Version: 1.0
  */
 

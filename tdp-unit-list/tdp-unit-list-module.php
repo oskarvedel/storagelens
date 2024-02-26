@@ -2,7 +2,6 @@
 
 require_once dirname(__FILE__) . '/unit-list.php';
 require_once dirname(__FILE__) . '/archive-item.php';
-require_once dirname(__FILE__) . '/tdp-common-unit-list.php';
 
 function custom_date_picker_scripts()
 {

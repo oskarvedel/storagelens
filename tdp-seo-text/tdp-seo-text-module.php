@@ -1,7 +1,5 @@
 <?php
 
-require_once dirname(__FILE__) . '/tdp-common-seo-text.php';
-
 require_once dirname(__FILE__) . '/generate/generate-seo-texts.php';
 require_once dirname(__FILE__) . '/generate/generate-top-seo-texts.php';
 require_once dirname(__FILE__) . '/generate/generate-missing-static-map-images.php';

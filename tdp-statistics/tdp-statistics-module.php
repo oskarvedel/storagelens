@@ -3,7 +3,6 @@
 
 require_once dirname(__FILE__) . '/statistics-calcs-per-geolocation.php';
 require_once dirname(__FILE__) . '/statistics-calcs-per-gd-place.php';
-include dirname(__FILE__) . '/tdp-common-statistics.php';
 
 //add a button to update statistics data for all gd_places the plugin settings page
 function add_update_statistics_data_for_all_gd_places_button($links)

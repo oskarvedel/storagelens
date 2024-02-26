@@ -13,6 +13,7 @@ require_once dirname(__FILE__) . '/tdp-seo-text/tdp-seo-text-module.php';
 require_once dirname(__FILE__) . '/tdp-consolidations/tdp-consolidations-module.php';
 require_once dirname(__FILE__) . '/tdp-statistics/tdp-statistics-module.php';
 require_once dirname(__FILE__) . '/tdp-unit-list/tdp-unit-list-module.php';
+require_once dirname(__FILE__) . '/common/tdp-common.php';
 
 
 // Define the activation function

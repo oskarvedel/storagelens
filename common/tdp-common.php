@@ -47,7 +47,7 @@ $statistics_data_fields = array(
  *
  * @return string The geolocation slug extracted from the URL.
  */
-function extract_geolocation_slug_via_url_seo_text()
+function extract_geolocation_slug_via_url()
 {
 
     // Access the global $wp object
@@ -85,7 +85,7 @@ function extract_geolocation_slug_via_url_seo_text()
  *
  * @return int|null The geolocation ID if found, null otherwise.
  */
-function extract_geolocation_id_via_url_seo_text()
+function extract_geolocation_id_via_url()
 {
 
     // Get the geolocation slug from the URL
@@ -116,7 +116,7 @@ function extract_geolocation_id_via_url_seo_text()
 }
 
 
-function get_statistics_data_for_single_gd_place_seo_text($gd_place_id)
+function get_statistics_data_for_single_gd_place($gd_place_id)
 {
     global $statistics_data_fields;
 

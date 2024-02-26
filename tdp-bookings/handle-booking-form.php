@@ -2,13 +2,14 @@
 
 function handle_booking_form()
 {
+    xdebug_break();
     session_start();
 
     //rate limit form submissions
     $ip_address = $_SERVER['REMOTE_ADDR']; // Get the user's IP address
     $submission_time = time();
     $limit = 1; // Limit for submissions
-    $time_frame = 60 * 30; // 30 minutes in seconds
+    $time_frame = 60 * 15; // time frame is 15 minutes
 
     // Initialize if not set
     if (!isset($_SESSION['submissions'])) {

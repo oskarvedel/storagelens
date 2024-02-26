@@ -3,6 +3,7 @@
 require_once dirname(__FILE__) . '/unit-list.php';
 require_once dirname(__FILE__) . '/archive-item.php';
 
+
 function custom_date_picker_scripts()
 {
     wp_enqueue_script('custom-date-picker-js', plugins_url('/js/booking_form.js', __FILE__), array('jquery'), null, true);
@@ -89,3 +90,13 @@ function get_archive_item_html()
 }
 // Register the shortcode.
 add_shortcode("archive_item_html", "get_archive_item_html");
+
+
+function handle_create_booking_form_nonce()
+{
+    echo wp_create_nonce('booking_form_nonce_action');
+    exit();
+}
+
+add_action('wp_ajax_nopriv_create_booking_form_nonce_action', 'handle_create_booking_form_nonce');
+add_action('wp_ajax_create_booking_form_nonce_action', 'handle_create_booking_form_nonce');

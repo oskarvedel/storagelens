@@ -590,7 +590,7 @@ function generate_non_partner_text($finalOutput)
 {
     $current_pod = pods();
 
-    $statistics_data_fields = get_statistics_data_for_single_gd_place_unit_list($current_pod->field("id"));
+    $statistics_data_fields = get_statistics_data_for_single_gd_place($current_pod->field("id"));
     if (empty($statistics_data_fields)) {
         trigger_error("error in generate_non_partner_text: statistics_data_fields is empty for id: " . $current_pod->field("post_title"), E_USER_WARNING);
     }

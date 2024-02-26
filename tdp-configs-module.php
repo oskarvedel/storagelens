@@ -19,7 +19,7 @@ function modify_archive_query($query)
         if ($query->is_post_type_archive('gd_place')) {
             trigger_error('modify_archive_query: gd_place archive', E_USER_NOTICE);
             // Extract the geolocation ID from the URL
-            $geolocation_id = extract_geolocation_id_via_url_configs();
+            $geolocation_id = extract_geolocation_id_via_url();
             global $wp;
             $current_url = add_query_arg(array(), $wp->request);
             // $special_location = get_post_meta($current_geolocation_id, 'special_location', true);
@@ -59,7 +59,7 @@ add_action('elementor/query/lokation_page_query', function ($query) {
 
         // trigger_error('lokation_page_query_test: gd_place archive', E_USER_NOTICE);
         // Extract the geolocation ID from the URL
-        $geolocation_id = extract_geolocation_id_via_url_configs();
+        $geolocation_id = extract_geolocation_id_via_url();
         global $wp;
         $current_url = add_query_arg(array(), $wp->request);
         // $special_location = get_post_meta($current_geolocation_id, 'special_location', true);

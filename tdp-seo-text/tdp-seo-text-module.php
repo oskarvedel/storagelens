@@ -22,7 +22,7 @@ require_once dirname(__FILE__) . '/texts/top-seo-text.php';
 function set_lokation_archive_meta_titles()
 {
     if (geodir_is_page('post_type')) {
-        $geolocation_id = extract_geolocation_id_via_url_seo_text();
+        $geolocation_id = extract_geolocation_id_via_url();
         $meta_title = get_post_meta($geolocation_id, 'meta_title', true);
         if (!empty($meta_title)) {
             return $meta_title;
@@ -36,7 +36,7 @@ add_filter('pre_get_document_title', 'set_lokation_archive_meta_titles', 21);
 function set_lokation_archive_meta_descriptions()
 {
     if (geodir_is_page('post_type')) {
-        $geolocation_id = extract_geolocation_id_via_url_seo_text();
+        $geolocation_id = extract_geolocation_id_via_url();
         $meta_description = get_post_meta($geolocation_id, 'meta_description', true);
         if (!empty($meta_description)) {
             echo '<meta name="description" content="' . esc_attr($meta_description) . '">';
@@ -49,7 +49,7 @@ add_action('wp_head', 'set_lokation_archive_meta_descriptions');
 
 function top_seo_text_func()
 {
-    $id = extract_geolocation_id_via_url_seo_text();
+    $id = extract_geolocation_id_via_url();
     $top_seo_text = get_post_meta($id, 'top_seo_text', true);
     echo $top_seo_text;
 }
@@ -58,7 +58,7 @@ add_shortcode('gd_location_top_seo_text_shortcode', 'top_seo_text_func');
 
 function seo_text_func()
 {
-    $id = extract_geolocation_id_via_url_seo_text();
+    $id = extract_geolocation_id_via_url();
     $seo_text = get_post_meta($id, 'seo_text', true);
     echo $seo_text;
 }
@@ -67,7 +67,7 @@ add_shortcode('gd_location_seo_text_shortcode', 'seo_text_func');
 
 function nearby_locations_list_func()
 {
-    $id = extract_geolocation_id_via_url_seo_text();
+    $id = extract_geolocation_id_via_url();
     $nearby_locations_list = get_post_meta($id, 'nearby_locations_list', true);
     echo $nearby_locations_list;
 }

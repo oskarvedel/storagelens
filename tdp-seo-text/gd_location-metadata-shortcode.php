@@ -10,7 +10,7 @@ function gd_location_metadata_shortcode_func($atts)
      // if (!isset($atts[0])) {
      //      return;
      // }
-     $geolocation_id = extract_geolocation_id_via_url_seo_text();
+     $geolocation_id = extract_geolocation_id_via_url();
 
      $field = esc_attr($a['field']);
 

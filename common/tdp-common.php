@@ -89,7 +89,7 @@ function extract_geolocation_id_via_url()
 {
 
     // Get the geolocation slug from the URL
-    $slug = extract_geolocation_slug_via_url_seo_text();
+    $slug = extract_geolocation_slug_via_url();
 
     // // Use the Pods plugin to get the geolocation object associated with the slug
     // $slug_test = pods('geolocations', $slug);

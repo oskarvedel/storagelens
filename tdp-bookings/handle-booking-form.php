@@ -2,7 +2,6 @@
 
 function handle_booking_form()
 {
-    xdebug_break();
     session_start();
 
     //rate limit form submissions

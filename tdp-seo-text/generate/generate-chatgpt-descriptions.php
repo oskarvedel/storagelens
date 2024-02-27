@@ -122,12 +122,10 @@ function get_statistics_data_fields_values($input_text, $statistics_data_fields,
 {
      foreach ($statistics_data_fields as $field) {
           $value = get_post_meta($geolocation_id, $field, true);
-          if (!empty($value)) {
+          if (!empty($value) && $value != 0) {
                $rounded = floatval(round($value, 2));
                $numberformat = number_format($value, 0, ',', '.');
                $input_text = str_replace("[$field]", "[$field]: " . $numberformat, $input_text);
-          } else {
-               $input_text = str_replace("[$field]", "Ukendt", $input_text);
           }
      }
      return $input_text;

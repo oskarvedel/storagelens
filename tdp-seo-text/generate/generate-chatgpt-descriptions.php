@@ -20,6 +20,7 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
           $description = get_post_meta($geolocation_id, 'description', true);
 
           if ($description) {
+               trigger_error("description already exists for $geolocation_id", E_USER_NOTICE);
                continue;
           }
 

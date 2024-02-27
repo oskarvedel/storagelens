@@ -2,7 +2,7 @@
 
 function generate_missing_chatgpt_geolocation_descriptions($num)
 {
-     xdebug_break();
+     // xdebug_break();
      //set option
      global $description_prompt;
      global $statistics_data_fields;

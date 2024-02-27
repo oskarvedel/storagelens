@@ -44,7 +44,7 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
           $data = [
                'model' => 'gpt-4', // specifying the model
                'messages' => $messages, // your prompt
-
+               'max_tokens' => 7000, // increase as needed
           ];
 
           // Initialize cURL session
@@ -168,11 +168,11 @@ brug nøgleordene i hele artiklen, og brug mindst et af nøgleordene i hver over
 
 læg vægt på, at man kan finde depotrum i [location] på tjekdepot.dk. 
 
-brug ordet “depotrum” i stedet for “enhed eller opbevaringsenhed”. brug “m2” i stedet for kvadratmeter. brug “m3” i stedet for kubikmeter.
+brug ordet “depotrum” i stedet for “enhed eller opbevaringsenhed”. brug “m²” i stedet for kvadratmeter. brug “m³” i stedet for kubikmeter.
 
-undlad at bruge “:” i overskrifterne. sæt h2-tags om overskrifterne. undladt at bruge stort begyndelsesbogstav i hvert ord i overskrifterne.
+undlad at bruge “:” i overskrifterne. sæt h2-tags om overskrifterne. et afsnit er hele teksten under en overskrift. sæt p-tags om hvert afsnit, men brug kun et p-tag for hver overskrift. undlad at bruge stort begyndelsesbogstav i hvert ord i overskrifterne.
 
-artiklen skal være på fire til fem afsnit, og længden skal være omkring 700 ord. giv hvert afsnit en overskrift, der indeholder mindst et af nøgleordene. skriv hele artiklen, lad være med kun at skrive en skitse.
+artiklen skal være på fire til fem afsnit, og længden skal være omkring 1300 ord. hvert afsnit skal være på minimum 300 ord. hcvertgiv hvert afsnit en overskrift, der indeholder mindst et af nøgleordene. skriv hele artiklen, lad være med kun at skrive en skitse.
 ';
 
 function get_statistics_data_fields_values($input_text, $statistics_data_fields, $geolocation_id)

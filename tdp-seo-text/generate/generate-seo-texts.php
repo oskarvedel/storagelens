@@ -7,7 +7,7 @@ function generate_seo_texts()
      foreach ($geolocations as $geolocation) {
           $geolocation_id = $geolocation->ID;
 
-          // if ($geolocation_id == 5926) {
+          // if ($geolocation_id == 6252) {
           //      xdebug_break();
           // }
 
@@ -35,8 +35,14 @@ function generate_seo_texts()
 
           //add content to output
           if ($description) {
-               $output .= get_seo_text($archive_title_trimmed, $description_title_candidates);
-               $output .= ' <p class="three-columns">[map img]<br>' . $description . '</p>';
+               // $output .= get_seo_text($archive_title_trimmed, $description_title_candidates);
+
+               //replace the first <p> tag with "<p class="three-columns">[map img]<br>"
+               $description = preg_replace('/<p>/', '<p class="three-columns">[map img]<br>', $description, 1);
+
+               //replace all of the other <p> tags with "<p class="three-columns">"
+               $description = preg_replace('/<p>/', '<p class="three-columns">', $description);
+               $output .= $description;
           }
 
 
@@ -51,15 +57,15 @@ function generate_seo_texts()
           }
 
           //if succifient gd places, use non-basic text
-          $output .= '<hr class="line">';
-          $output .= get_seo_text($archive_title_trimmed, $first_paragraph_candidates);
+          // $output .= '<hr class="line">';
+          // $output .= get_seo_text($archive_title_trimmed, $first_paragraph_candidates);
           $output .= '<hr class="line">';
           $output .= generate_price_table($geolocation_id);
-          $output .= '<hr class="line">';
-          $output .= get_seo_text($archive_title_trimmed, $second_paragraph_candidates);
-          $output .= '<hr class="line">';
-          $output .= $third_paragraph;
-          $output .= '<hr class="line">';
+          // $output .= '<hr class="line">';
+          // $output .= get_seo_text($archive_title_trimmed, $second_paragraph_candidates);
+          // $output .= '<hr class="line">';
+          // $output .= $third_paragraph;
+          // $output .= '<hr class="line">';
           //$output .= generate_schools_paragraph($geolocation_id);
           //$output .= generate_neighbourhoods_paragraph($geolocation_id);
           $output .= generate_selfstorage_provider_list($geolocation_id);

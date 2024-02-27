@@ -37,6 +37,8 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
 
           $iterationPrompt = get_statistics_data_fields_values($iterationPrompt, $statistics_data_fields, $geolocation_id);
 
+          update_post_meta($geolocation_id, 'chatgpt_description_prompt', $iterationPrompt);
+
           // trigger_error("generating chatgpt desc for $archive_title_trimmed with prompt: $iterationPrompt", E_USER_NOTICE);
 
           $messages = [

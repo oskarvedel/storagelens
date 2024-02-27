@@ -30,12 +30,12 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
 
           $seo_gd_place_list = get_post_meta($geolocation_id, 'seo_gd_place_list', false);
 
+          $seo_num_of_units_available = get_post_meta($geolocation_id, 'seo_num_of_units_available', true);
+
           $num_of_seo_gd_places = count($seo_gd_place_list);
 
           // The prompt you want to send to ChatGPT
-          $iterationPrompt = str_replace("[location]", $archive_title_trimmed, $description_prompt);
-
-          $iterationPrompt = get_statistics_data_fields_values($iterationPrompt, $statistics_data_fields, $geolocation_id);
+          $iterationPrompt = replace_variable_placeholders_chatgpt_description($description_prompt, $statistics_data_fields, $geolocation_id, $num_of_seo_gd_places, $seo_num_of_units_available, $archive_title_trimmed);
 
           update_post_meta($geolocation_id, 'chatgpt_description_prompt', $iterationPrompt);
 
@@ -99,10 +99,46 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
      trigger_error("generated chatgpt descriptions for $counter geolocations", E_USER_NOTICE);
 }
 
+function replace_variable_placeholders_chatgpt_description($input_text, $statistics_data_fields, $geolocation_id, $num_of_seo_gd_places, $seo_num_of_units_available, $archive_title_trimmed)
+{
+     $input_text = str_replace("[seo_num_of_units_available]",  "[seo_num_of_units_available]: " . $seo_num_of_units_available, $input_text);
+
+     $input_text = str_replace("[seo_num_of_units_available]",  "[num of depotrum available]" . $seo_num_of_units_available, $input_text);
+
+     $input_text = str_replace("[num_of_seo_gd_places]", "[num_of_seo_gd_places]: " . $num_of_seo_gd_places, $input_text);
+
+     $input_text = str_replace("[num_of_seo_gd_places]",  "[num of lagerhoteller available]" . $seo_num_of_units_available, $input_text);
+
+     $input_text = str_replace("[location]", $archive_title_trimmed, $input_text);
+
+     $input_text = get_statistics_data_fields_values($input_text, $statistics_data_fields, $geolocation_id);
+
+     $input_text = replace_image_variables($input_text, $geolocation_id, $archive_title_trimmed);
+
+     return $input_text;
+}
+
+function get_statistics_data_fields_values($input_text, $statistics_data_fields, $geolocation_id)
+{
+     foreach ($statistics_data_fields as $field) {
+          $value = get_post_meta($geolocation_id, $field, true);
+          if (!empty($value)) {
+               $rounded = floatval(round($value, 2));
+               $numberformat = number_format($value, 0, ',', '.');
+               $input_text = str_replace("[$field]", "[$field]: " . $numberformat, $input_text);
+          } else {
+               $input_text = str_replace("[$field]", "Ukendt", $input_text);
+          }
+     }
+     return $input_text;
+}
+
+
 $description_prompt = '
 
 statistik om opbevaring i [location] fra tjekdepot.dk
-[num of units available]
+[seo_num_of_units_available]
+[num_of_seo_gd_places]
 [num of m2 available]
 [num of m3 available]
 [average price]
@@ -179,18 +215,3 @@ undlad at bruge “:” i overskrifterne. sæt h2-tags om overskrifterne. et afs
 
 artiklen skal være på fire til fem afsnit, og længden skal være omkring 1300 ord. hvert afsnit skal være på minimum 300 ord. hcvertgiv hvert afsnit en overskrift, der indeholder mindst et af nøgleordene. skriv hele artiklen, lad være med kun at skrive en skitse.
 ';
-
-function get_statistics_data_fields_values($input_text, $statistics_data_fields, $geolocation_id)
-{
-     foreach ($statistics_data_fields as $field) {
-          $value = get_post_meta($geolocation_id, $field, true);
-          if (!empty($value)) {
-               $rounded = floatval(round($value, 2));
-               $numberformat = number_format($value, 0, ',', '.');
-               $input_text = str_replace("[$field]", "[$field]: " . $numberformat, $input_text);
-          } else {
-               $input_text = str_replace("[$field]", "Ukendt", $input_text);
-          }
-     }
-     return $input_text;
-}

@@ -7,9 +7,9 @@ function generate_seo_texts()
      foreach ($geolocations as $geolocation) {
           $geolocation_id = $geolocation->ID;
 
-          if ($geolocation_id == 5926) {
-               xdebug_break();
-          }
+          // if ($geolocation_id == 5926) {
+          //      xdebug_break();
+          // }
 
           $archive_title_trimmed = get_the_title($geolocation_id);
 

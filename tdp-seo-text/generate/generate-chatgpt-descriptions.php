@@ -2,8 +2,10 @@
 
 function generate_missing_chatgpt_geolocation_descriptions($num)
 {
+     // xdebug_break();
      //set option
      global $description_prompt;
+     global $statistics_data_fields;
      $api_key = get_option('seo_decriptions_api_key');
      $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
@@ -30,6 +32,10 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
 
           // The prompt you want to send to ChatGPT
           $iterationPrompt = str_replace("[location]", $archive_title_trimmed, $description_prompt);
+
+          $iterationPrompt = get_statistics_data_fields_values($iterationPrompt, $statistics_data_fields, $geolocation_id);
+
+          trigger_error("generating chatgpt desc for $archive_title_trimmed with prompt: $iterationPrompt", E_USER_NOTICE);
 
           $messages = [
                ["role" => "user", "content" =>  $iterationPrompt],
@@ -89,10 +95,98 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
      trigger_error("generated chatgpt descriptions for $counter geolocations", E_USER_NOTICE);
 }
 
-$description_prompt = "skriv en kort tekst/artikel om området. læg vægt på fakta om området som områdets placering i landet, områdets omdømme, nøgletal om indbyggere og erhverv, områdets udvikling.lområdets forbindelserne til nærliggende byer eller bydele. find gerne selv på flere emner. undlad emner, der ikke er tilstrækkelig information om.  Prioriter substans og undgå fuffy, fyld-indhold. 
+$description_prompt = '
 
-brug en uhøjtidelig tone uden fyldeord og superlativer. skriv koncist og uden for mange floskler. brug en naturlig professionel, informativ skrivestil og tone. brug ikke pompøse ord. brug kun danske ord. Skriv med selvsikkerhed, brug et klart og præcist sprog, vis ekspertise, og vær gennemsigtig
+statistik om opbevaring i [location] fra tjekdepot.dk
+[num of units available]
+[num of m2 available]
+[num of m3 available]
+[average price]
+[lowest price]
+[highest price]
+[smallest m2 size]
+[largest m2 size]
+[average m2 price]
+[average m3 price]
+[mini size lowest price]
+[mini size highest price]
+[mini size average price]
+[mini size average m2 price]
+[mini size average m3 price]
+[small size lowest price]
+[small size highest price]
+[small size average price]
+[small size average m2 price]
+[small size average m3 price]
+[medium size lowest price]
+[medium size highest price]
+[medium size average price]
+[medium size average m2 price]
+[medium size average m3 price]
+[large size lowest price]
+[large size highest price]
+[large size average price]
+[large size average m2 price]
+[large size average m3 price]
+[very large size lowest price]
+[very large size highest price]
+[very large size average price]
+[very large size average m2 price]
+[very large size average m3 price]
 
-teksten skal være et sammenhængene afsnit på omkring 300 ord.
 
-område: [location]";
+alle priser er i kroner.
+
+skriv en artikel opbevaring i [location]. artiklen skal handle om mulighederne for opbevaring i [location] samt om at flytte til århus.
+
+nøgleord:
+	•	opbevaring i [location]
+	•	opbevaringsrum i [location]
+	•	depotrum i [location]
+	•	opbevaring af møbler i [location]
+	•	opmagasinering i [location]
+	•	opmagasinering af møbler i [location]
+	•	lagerhotel i [location]
+	•	self storage i [location]
+
+emner:
+	•	på priserne for depotrum i området (ud fra statistik)
+	•	fakta om området som [location] placering i landet
+	•	[location] omdømme som tilflytter
+	•	nøgletal om indbyggere og erhverv
+	•	hvilke størrelser depotrum der er tilgængelige i [location] (ud fra statistik)
+	•	billig opbevaring i [location] (ud fra statistik)
+	•	opbevaring af møbler hvis man skal flytte til [location] (ud fra statistik)
+	•	nøgletal om [location] udvikling
+	•	områdets forbindelserne til nærliggende byer eller bydele.
+
+undlad emner, der ikke er tilstrækkelig information om. 
+
+
+Prioriter substans og undgå fuffy, fyld-indhold. brug en uhøjtidelig tone uden fyldeord og superlativer. skriv koncist og uden for mange floskler. brug en naturlig professionel, informativ skrivestil og tone. brug ikke pompøse ord. brug kun danske ord. Skriv med selvsikkerhed, brug et klart og præcist sprog, vis ekspertise, og vær gennemsigtig. brug danske formuleringer og sætningskonstruktioner. husk at bruge hvert nøgleord flere gange.
+
+brug nøgleordene i hele artiklen, og brug mindst et af nøgleordene i hver overskrift. brug hvert nøgleord flere gange igennem hele teksten. brug ikke det samme nøgleord i flere overskrifter.
+
+læg vægt på, at man kan finde depotrum i [location] på tjekdepot.dk. 
+
+brug ordet “depotrum” i stedet for “enhed eller opbevaringsenhed”. brug “m2” i stedet for kvadratmeter. brug “m3” i stedet for kubikmeter.
+
+undlad at bruge “:” i overskrifterne. sæt h2-tags om overskrifterne. undladt at bruge stort begyndelsesbogstav i hvert ord i overskrifterne.
+
+artiklen skal være på fire til fem afsnit, og længden skal være omkring 700 ord. giv hvert afsnit en overskrift, der indeholder mindst et af nøgleordene. skriv hele artiklen, lad være med kun at skrive en skitse.
+';
+
+function get_statistics_data_fields_values($input_text, $statistics_data_fields, $geolocation_id)
+{
+     foreach ($statistics_data_fields as $field) {
+          $value = get_post_meta($geolocation_id, $field, true);
+          if (!empty($value)) {
+               $rounded = floatval(round($value, 2));
+               $numberformat = number_format($value, 0, ',', '.');
+               $input_text = str_replace("[$field]", "[$field]: " . $numberformat, $input_text);
+          } else {
+               $input_text = str_replace("[$field]", "Ukendt", $input_text);
+          }
+     }
+     return $input_text;
+}

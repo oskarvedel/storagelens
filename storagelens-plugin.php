@@ -73,10 +73,10 @@ function tdp_menu_page()
                 <input type="hidden" name="tdp_action" value="generate_missing_chatgpt_geolocation_short_descriptions">
                 <input type="submit" value="<?php _e('Generate 50 missing ChatGPT short descriptions', 'textdomain'); ?>" class="button">
             </form>
-            <!-- Generate 50 missing ChatGPT descriptions -->
+            <!-- Generate 50 missing ChatGPT descriptions-->
             <form method="post" action="">
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
-                <input type="hidden" name="tdp_action" value="generate_missing_chatgpt_geolocation_descriptions">
+                <input type="hidden" name="tdp_action" value="generate_missing_chatgpt_geolocation_descriptions_2">
                 <input type="submit" value="<?php _e('Generate 50 missing ChatGPT descriptions', 'textdomain'); ?>" class="button">
             </form>
             <!-- Generate meta descriptions -->
@@ -244,6 +244,9 @@ function tdp_plugin_handle_post()
                 break;
             case 'generate_missing_chatgpt_geolocation_short_descriptions':
                 generate_missing_chatgpt_geolocation_short_descriptions(50);
+                break;
+            case 'generate_missing_chatgpt_geolocation_descriptions':
+                generate_missing_chatgpt_geolocation_descriptions(50);
                 break;
             case 'generate_missing_chatgpt_geolocation_descriptions':
                 generate_missing_chatgpt_geolocation_descriptions(50);

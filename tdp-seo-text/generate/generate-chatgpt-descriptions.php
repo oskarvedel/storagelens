@@ -2,10 +2,12 @@
 
 function generate_missing_chatgpt_geolocation_descriptions($num)
 {
+     xdebug_break();
      //set option
      global $description_prompt;
      global $statistics_data_fields;
-     $api_key = get_option('seo_decriptions_api_key');
+     $api_key = SEO_DESCRIPTIONS_CHATGPT_API_KEY;
+
      $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
      $counter = 0;

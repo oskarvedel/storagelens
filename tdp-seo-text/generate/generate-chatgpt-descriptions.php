@@ -103,11 +103,11 @@ function replace_variable_placeholders_chatgpt_description($input_text, $statist
 {
      $input_text = str_replace("[seo_num_of_units_available]",  "[seo_num_of_units_available]: " . $seo_num_of_units_available, $input_text);
 
-     $input_text = str_replace("[seo_num_of_units_available]",  "[num of depotrum available]" . $seo_num_of_units_available, $input_text);
+     $input_text = str_replace("[seo_num_of_units_available]",  "[num of depotrum available]", $input_text);
 
      $input_text = str_replace("[num_of_seo_gd_places]", "[num_of_seo_gd_places]: " . $num_of_seo_gd_places, $input_text);
 
-     $input_text = str_replace("[num_of_seo_gd_places]",  "[num of lagerhoteller available]" . $seo_num_of_units_available, $input_text);
+     $input_text = str_replace("[num_of_seo_gd_places]",  "[num of lagerhoteller available]", $input_text);
 
      $input_text = str_replace("[location]", $archive_title_trimmed, $input_text);
 

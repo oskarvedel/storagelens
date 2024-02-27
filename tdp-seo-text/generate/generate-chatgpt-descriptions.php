@@ -47,7 +47,7 @@ function generate_missing_chatgpt_geolocation_descriptions($num)
           $data = [
                'model' => 'gpt-4', // specifying the model
                'messages' => $messages, // your prompt
-               'max_tokens' => 7000, // increase as needed
+               'max_tokens' => 4000, // increase as needed
           ];
 
           // Initialize cURL session

@@ -134,6 +134,13 @@ function update_statistics_data_for_all_geolocations()
     foreach ($geolocations as $geolocation) {
         $geolocation_id = $geolocation->ID;
 
+        global $statistics_data_fields;
+
+        foreach ($statistics_data_fields as $field) {
+            delete_post_meta($geolocation_id, $field);
+        }
+
+
         //get all gd_places for geolocation
         $gd_place_list = get_post_meta($geolocation_id, 'gd_place_list', false);
         $gd_place_list_ids = array_map(function ($item) {

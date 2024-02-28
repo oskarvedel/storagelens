@@ -204,6 +204,13 @@ function update_statistics_data_for_all_gd_places()
     $counter = 0;
     foreach ($gd_places as $gd_place) {
         $counter++;
+
+        global $statistics_data_fields;
+
+        foreach ($statistics_data_fields as $field) {
+            delete_post_meta($gd_place->ID, $field);
+        }
+
         $depotrum_data = get_depotrum_data_for_single_gd_place($gd_place->ID);
         //trigger_error("depotrum_data: for " . $gd_place->post_name . print_r($depotrum_data, true), E_USER_WARNING);
         if (!empty($depotrum_data)) {

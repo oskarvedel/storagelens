@@ -74,3 +74,4 @@ wp-config.php
 # Note: If you wish to whitelist themes,
 # uncomment the next line
 #/wp-content/themes
+tdp-seo-text/texts/article_generator_training_data.jsonl

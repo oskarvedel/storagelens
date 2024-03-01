@@ -86,7 +86,15 @@ function import_scraper_data($supplier_name)
 
     if ($supplier_name == "nettolager") {
         $file = plugins_url('/data/nettolagerUnits.json', __FILE__);
-        $json = file_get_contents($file);
+        $contextOptions = [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ],
+        ];
+
+        $context = stream_context_create($contextOptions);
+        $json = file_get_contents($file, false, $context);
 
         //open the file and serialize the json data
         $data = json_decode($json, true);
@@ -265,11 +273,18 @@ function sanitize_nettolager_data($data)
 {
     return array_map(function ($item) {
         $sanitizedData = array_map(function ($unitData) {
+            // Remove all non-numeric characters except comma
+            $price = preg_replace("/[^0-9,]/", "", $unitData['price']);
+            // Replace comma with dot
+            $price = str_replace(",", ".", $price);
+            // Convert to float
+            $price = floatval($price);
+
             return array(
                 'm2' => str_replace(" m2", "", $unitData['m2']),
                 'm3' => str_replace(" m3", "", $unitData['m3']),
                 'available' => intval(preg_replace("/[^0-9]/", "", $unitData['available'])),
-                'price' => floatval(preg_replace("/[^0-9\.]/", "", $unitData['price']))
+                'price' => $price
             );
         }, $item['singleLocationsUnitData']);
 

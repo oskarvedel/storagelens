@@ -45,17 +45,6 @@ function generate_seo_texts()
                $output .= $description;
           }
 
-
-          //if no gd places, use basic text
-          if ($num_of_seo_gd_places <= 2) {
-               global $basic_text;
-               $output = $basic_text;
-               $output = str_replace("[location]", $archive_title_trimmed, $output);
-               update_post_meta($geolocation_id, 'seo_text', $output);
-               $output .= '</div>'; //add closing div for seo-text class div
-               continue;
-          }
-
           //if succifient gd places, use non-basic text
           // $output .= '<hr class="line">';
           // $output .= get_seo_text($archive_title_trimmed, $first_paragraph_candidates);

@@ -179,36 +179,53 @@ function tdp_menu_page()
                 <input type="submit" value="<?php _e('Run General Geolocation Consolidations', 'textdomain'); ?>" class="button">
             </form>
         </div>
-    </div>
 
-    <!-- style the admin page -->
-    <style>
-        .tdp-admin-wrap {
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        <!--add scraper import section -->
+        <div class="tdp-section">
+            <h2><?php _e('Scraper Import', 'textdomain'); ?></h2>
+            <!-- Import scraper data for boxdepotet -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="import_boxdepotet_scraper_data">
+                <input type="submit" value="<?php _e('Import scraper data for boxdepotet', 'textdomain'); ?>" class="button">
+            </form>
+            <!-- Import scraper data for nettolager -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="import_nettolager_scraper_data">
+                <input type="submit" value="<?php _e('Import scraper data for nettolager', 'textdomain'); ?>" class="button">
+            </form>
+        </div>
 
-        .tdp-section {
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f9f9f9;
-            border: 1px solid #e5e5e5;
-            border-radius: 3px;
-        }
 
-        .tdp-section h2 {
-            margin-top: 0;
-        }
+        <!-- style the admin page -->
+        <style>
+            .tdp-admin-wrap {
+                max-width: 800px;
+                margin: 0 auto;
+            }
 
-        .tdp-form {
-            margin-bottom: 10px;
-        }
+            .tdp-section {
+                margin-bottom: 20px;
+                padding: 10px;
+                background-color: #f9f9f9;
+                border: 1px solid #e5e5e5;
+                border-radius: 3px;
+            }
 
-        .tdp-form input[type="submit"] {
-            margin-top: 5px;
-        }
-    </style>
-<?php
+            .tdp-section h2 {
+                margin-top: 0;
+            }
+
+            .tdp-form {
+                margin-bottom: 10px;
+            }
+
+            .tdp-form input[type="submit"] {
+                margin-top: 5px;
+            }
+        </style>
+    <?php
 
 }
 
@@ -280,6 +297,12 @@ function tdp_plugin_handle_post()
                 break;
             case 'update_statistics_data_for_all_geolocations':
                 update_statistics_data_for_all_geolocations();
+                break;
+            case 'import_boxdepotet_scraper_data':
+                import_scraper_data("boxdepotet");
+                break;
+            case 'import_nettolager_scraper_data':
+                import_scraper_data("nettolager");
                 break;
             default:
         }

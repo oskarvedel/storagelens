@@ -173,6 +173,7 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
 
                 // Set the price and availability
                 update_post_meta($unit_link_id, 'price', $unitData['price']);
+                trigger_error('price: ' . $unitData['price'], E_USER_NOTICE);
                 if ($unitData['available'] == 0) {
                     update_post_meta($unit_link_id, 'available', '1');
                 } else {
@@ -182,13 +183,13 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
                     }
                 }
 
-                //set the bookUrl
-                if ($unitData['bookUrl']) {
+                //set the bookUrl if the array key exists
+                if ($unitData['bookUrl'] != null) {
                     update_post_meta($unit_link_id, 'booking_link', $unitData['bookUrl']);
                 }
 
                 //set the supplier_unit_id
-                if ($unitData['supplier_unit_id']) {
+                if ($unitData['supplier_unit_id'] != null) {
                     update_post_meta($unit_link_id, 'supplier_unit_id', $unitData['supplier_unit_id']);
                 }
 

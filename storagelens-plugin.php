@@ -195,6 +195,14 @@ function tdp_menu_page()
                 <input type="hidden" name="tdp_action" value="import_nettolager_scraper_data">
                 <input type="submit" value="<?php _e('Import scraper data for nettolager', 'textdomain'); ?>" class="button">
             </form>
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="remove_boxdepotet_scraper_data">
+                <input type="submit" value="<?php _e('Remove boxdepotet data', 'textdomain'); ?>" class="button">
+                <form method="post" action="">
+                    <?php wp_nonce_field('tdp_action_nonce'); ?>
+                    <input type="hidden" name="tdp_action" value="remove_nettolager_scraper_data">
+                    <input type="submit" value="<?php _e('Remove nettolager data', 'textdomain'); ?>" class="button">
         </div>
 
 
@@ -304,6 +312,10 @@ function tdp_plugin_handle_post()
             case 'import_nettolager_scraper_data':
                 import_scraper_data("nettolager");
                 break;
+            case 'remove_boxdepotet_scraper_data':
+                remove_scraper_data("boxdepotet");
+            case 'remove_nettolager_scraper_data':
+                remove_scraper_data("nettolager");
             default:
         }
     }

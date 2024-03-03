@@ -42,9 +42,9 @@ function tdp_daily_functions()
     sleep(30);
     generate_archive_item_html_for_all_gd_places();
     sleep(30);
-    generate_missing_chatgpt_geolocation_descriptions(50);
+    // generate_missing_chatgpt_geolocation_descriptions(50);
     sleep(30);
-    generate_missing_chatgpt_geolocation_short_descriptions(50);
+    // generate_missing_chatgpt_geolocation_short_descriptions(50);
     trigger_error('FINISHED RUNNING TDP DAILY FUNCTIONS', E_USER_WARNING);
 }
 add_action('run_tdp_daily_functions', 'tdp_daily_functions');

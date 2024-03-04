@@ -52,12 +52,12 @@ function import_scraper_data($supplier_name)
 
     //check if the response body is empty
     if (empty($response['body'])) {
-        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 5 mins', E_USER_WARNING);
+        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
 
         //schedule a new run of the scraper in 5 minutes
         $timestamp = wp_next_scheduled('scraper');
         if ($timestamp == false) {
-            wp_schedule_single_event(time() + 300, 'run_scraper_action', array($supplier_name));
+            wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
         }
         return;
     }
@@ -71,10 +71,10 @@ function import_scraper_data($supplier_name)
 
     //check if there is any data
     if (empty($data)) {
-        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 5 mins', E_USER_WARNING);
+        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
         $timestamp = wp_next_scheduled('scraper');
         if ($timestamp == false) {
-            wp_schedule_single_event(time() + 300, 'run_scraper_action', array($supplier_name));
+            wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
         }
         return;
         return;

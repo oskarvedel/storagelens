@@ -71,7 +71,12 @@ function import_scraper_data($supplier_name)
 
     //check if there is any data
     if (empty($data)) {
-        trigger_error($supplier_name . ' data is empty', E_USER_WARNING);
+        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 5 mins', E_USER_WARNING);
+        $timestamp = wp_next_scheduled('scraper');
+        if ($timestamp == false) {
+            wp_schedule_single_event(time() + 300, 'run_scraper_action', array($supplier_name));
+        }
+        return;
         return;
     }
 
@@ -155,7 +160,6 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
 
                 // Set the price and availability
                 update_post_meta($unit_link_id, 'price', $unitData['price']);
-                trigger_error('price: ' . $unitData['price'], E_USER_NOTICE);
                 if ($unitData['available'] == 0) {
                     update_post_meta($unit_link_id, 'available', '0');
                 } else {
@@ -166,12 +170,12 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
                 }
 
                 //set the bookUrl if the array key exists
-                if ($unitData['bookUrl'] != null) {
+                if (isset($unitData['bookUrl'])) {
                     update_post_meta($unit_link_id, 'booking_link', $unitData['bookUrl']);
                 }
 
                 //set the supplier_unit_id
-                if ($unitData['supplier_unit_id'] != null) {
+                if (isset($unitData['supplier_unit_id'])) {
                     update_post_meta($unit_link_id, 'supplier_unit_id', $unitData['supplier_unit_id']);
                 }
 
@@ -273,7 +277,7 @@ function sanitize_nettolager_data($data)
 
         return array(
             'url' => $item['url'],
-            'unitData' => $sanitizedData
+            'singleLocationsUnitData' => $sanitizedData
         );
     }, $data);
 }

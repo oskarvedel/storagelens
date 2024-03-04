@@ -131,6 +131,10 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
     // Use WordPress's built-in object caching, if available, to store titles
     $cached_titles = [];
 
+    $gd_places_not_found = 0;
+
+    $unit_links_created = 0;
+
     // Loop through the batches
     foreach ($batches as $batch_index => $batch) {
         // Loop through the data in the current batch
@@ -139,6 +143,7 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
             $gd_place_id = array_search($item['url'], $locations_urls);
             if (!$gd_place_id) {
                 trigger_error('gd_place not found for ' . $supplier_name . ' url: ' . $item['url'], E_USER_WARNING);
+                $gd_places_not_found++;
                 continue;
             }
 
@@ -182,6 +187,8 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
                 // Add the unit type and gd_place to the unit link
                 update_post_meta($unit_link_id, 'rel_type', $unit_type_id);
                 update_post_meta($unit_link_id, 'rel_lokation', $gd_place_id);
+
+                $unit_links_created++;
             }
 
             // Log how many unit links were created for the gd_place
@@ -193,6 +200,9 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
 
     // Free memory by unsetting the cached titles
     unset($cached_titles);
+
+    trigger_error('num of gd_places not found: ' . $gd_places_not_found, E_USER_NOTICE);
+    trigger_error('Created ' . $unit_links_created . ' ' .  $supplier_name . ' unit links', E_USER_NOTICE);
 }
 
 

@@ -78,7 +78,6 @@ function import_scraper_data($supplier_name)
 
         //log the data to console
         // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
-
         //serialize the data
         $sanitized_data = sanitize_boxdepotet_data($data);
         unset($data);
@@ -100,6 +99,7 @@ function import_scraper_data($supplier_name)
         $data = json_decode($json, true);
         unset($json);
 
+        xdebug_break();
         //serialize the data
         $sanitized_data = sanitize_nettolager_data($data);
         unset($data);
@@ -175,9 +175,9 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
                 update_post_meta($unit_link_id, 'price', $unitData['price']);
                 trigger_error('price: ' . $unitData['price'], E_USER_NOTICE);
                 if ($unitData['available'] == 0) {
-                    update_post_meta($unit_link_id, 'available', '1');
-                } else {
                     update_post_meta($unit_link_id, 'available', '0');
+                } else {
+                    update_post_meta($unit_link_id, 'available', '1');
                     if ($unitData['available']) {
                         update_post_meta($unit_link_id, 'available_date', $unitData['available']);
                     }
@@ -277,14 +277,14 @@ function sanitize_nettolager_data($data)
             // Remove all non-numeric characters except comma
             $price = preg_replace("/[^0-9,]/", "", $unitData['price']);
             // Replace comma with dot
-            $price = str_replace(",", ".", $price);
+            // $price = str_replace(",", ".", $price);
             // Convert to float
-            $price = floatval($price);
+            // $price = floatval($price);
 
             return array(
                 'm2' => str_replace(" m2", "", $unitData['m2']),
                 'm3' => str_replace(" m3", "", $unitData['m3']),
-                'available' => intval(preg_replace("/[^0-9]/", "", $unitData['available'])),
+                'available' => intval(preg_replace("/[^0-9]/", "", $unitData['available'])) == 0 ? 0 : 1,
                 'price' => $price
             );
         }, $item['singleLocationsUnitData']);

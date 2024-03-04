@@ -17,79 +17,101 @@ function import_scraper_data($supplier_name)
         return;
     }
 
-    trigger_error('waking the render service', E_USER_NOTICE);
+    if ($supplier_name == "nettolager") {
+        $file = plugins_url('/nettolager.json', __FILE__);
+        $contextOptions = [
+            'ssl' => [
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+            ],
+        ];
 
-    //set the timeout to 5 seconds
-    add_filter('http_request_timeout', function () {
-        return 5;
-    });
-    //wake the render service
-    $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
+        $context = stream_context_create($contextOptions);
+        $json = file_get_contents($file, false, $context);
 
-    wp_remote_get($url);
-    //sleep for 1 min while the service spins up
-    trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
-    sleep(30);
-    trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
-    //set the timeout to 10 minutes
-    add_filter('http_request_timeout', function () {
-        return 600;
-    });
+        //open the file and serialize the json data
+        $data = json_decode($json, true);
+        unset($json);
 
-    trigger_error('calling  ' . $supplier_name . ' scraper', E_USER_NOTICE);
-    $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/' . $supplier_name;
-
-    $response = wp_remote_get($url);
-
-    if (is_wp_error($response)) {
-        $error_message = $response->get_error_message();
-        if ('http_request_failed' === $response->get_error_code()) {
-            $error_message = 'The HTTP request timed out.';
-        }
-        trigger_error('Error getting data: ' . $error_message, E_USER_WARNING);
-        return;
-    }
-
-    //check if the response body is empty
-    if (empty($response['body'])) {
-        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
-
-        //schedule a new run of the scraper in 5 minutes
-        $timestamp = wp_next_scheduled('scraper');
-        if ($timestamp == false) {
-            wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
-        }
-        return;
-    }
-
-    //open the file and serialize the json data
-    $json = $response['body'];
-
-    //open the file and serialize the json data
-    $data = json_decode($json, true);
-    unset($json);
-
-    //check if there is any data
-    if (empty($data)) {
-        trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
-        $timestamp = wp_next_scheduled('scraper');
-        if ($timestamp == false) {
-            wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
-        }
-        return;
-        return;
-    }
-
-    //log the data to console
-    // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
-    //serialize the data
-
-    if ($supplier_name == "boxdepotet") {
-        $sanitized_data = sanitize_boxdepotet_data($data);
-    } else if ($supplier_name == "nettolager") {
+        //serialize the data
         $sanitized_data = sanitize_nettolager_data($data);
+        unset($data);
+    } else {
+
+        trigger_error('waking the render service', E_USER_NOTICE);
+
+        //set the timeout to 5 seconds
+        add_filter('http_request_timeout', function () {
+            return 5;
+        });
+        //wake the render service
+        $url = 'https://boxdepotet-unit-scraper.onrender.com/screenshot/https://www.dr.dk';
+
+        wp_remote_get($url);
+        //sleep for 1 min while the service spins up
+        trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
+        sleep(30);
+        trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
+        //set the timeout to 10 minutes
+        add_filter('http_request_timeout', function () {
+            return 600;
+        });
+
+        trigger_error('calling  ' . $supplier_name . ' scraper', E_USER_NOTICE);
+        $url = 'https://boxdepotet-unit-scraper.onrender.com/scrape/' . $supplier_name;
+
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response)) {
+            $error_message = $response->get_error_message();
+            if ('http_request_failed' === $response->get_error_code()) {
+                $error_message = 'The HTTP request timed out.';
+            }
+            trigger_error('Error getting data: ' . $error_message, E_USER_WARNING);
+            return;
+        }
+
+        //check if the response body is empty
+        if (empty($response['body'])) {
+            trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
+
+            //schedule a new run of the scraper in 5 minutes
+            $timestamp = wp_next_scheduled('scraper');
+            if ($timestamp == false) {
+                wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
+            }
+            return;
+        }
+
+        //open the file and serialize the json data
+        $json = $response['body'];
+
+        //open the file and serialize the json data
+        $data = json_decode($json, true);
+        unset($json);
+
+        //check if there is any data
+        if (empty($data)) {
+            trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
+            $timestamp = wp_next_scheduled('scraper');
+            if ($timestamp == false) {
+                wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
+            }
+            return;
+            return;
+        }
+
+        //log the data to console
+        // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
+        //serialize the data
+
+        if ($supplier_name == "boxdepotet") {
+            $sanitized_data = sanitize_boxdepotet_data($data);
+        } else if ($supplier_name == "nettolager") {
+            $sanitized_data = sanitize_nettolager_data($data);
+        }
+        unset($data);
     }
-    unset($data);
 
 
 

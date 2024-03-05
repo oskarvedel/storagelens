@@ -129,7 +129,6 @@ function import_scraper_data($supplier_name)
         unset($data);
     }
 
-
     remove_unit_links($supplier_name);
     //get the ids and urls of the locations
 
@@ -194,12 +193,12 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
             foreach ($item['singleLocationsUnitData'] as $unitData) {
                 $unit_type_id = array_search(get_unit_type_name($unitData, $supplier_name), $unit_types);
                 if (isset($unitData['m3'])) {
-                    $title = $title . ' link: ' . $unitData['m2'] . ' m2 / ' . $unitData['m3'] . ' m3';
+                    $unit_title = $title . ' link: ' . $unitData['m2'] . ' m2 / ' . $unitData['m3'] . ' m3';
                 } else {
-                    $title = $title . ' link: ' . $unitData['m2'] . ' m2';
+                    $unit_title = $title . ' link: ' . $unitData['m2'] . ' m2';
                 }
                 $unit_link_id = wp_insert_post(array(
-                    'post_title' => $title  . ' link: ' . $unitData['m2'] . ' m2 / ' . $unitData['m3'] . ' m3',
+                    'post_title' => $unit_title,
                     'post_type' => 'unit_link',
                     'post_status' => 'publish',
                     'post_author' => $user_id
@@ -298,11 +297,11 @@ function create_unit_types($unique_units, $user_id, $existing_unit_types, $suppl
 function get_unit_type_name($unit, $supplier_name)
 {
     if ($supplier_name == "nettolager") {
-        return $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+        return $supplier_name . ' ' . $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
     } else if ($supplier_name == "boxdepotet") {
-        return $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+        return  $supplier_name . ' ' .  $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
     } else if ($supplier_name == "pelican") {
-        return $unit['m2'] . ' m2';
+        return  $supplier_name . ' ' . $unit['m2'] . ' m2';
     }
 }
 

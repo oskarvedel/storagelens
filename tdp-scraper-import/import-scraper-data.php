@@ -297,11 +297,11 @@ function create_unit_types($unique_units, $user_id, $existing_unit_types, $suppl
 function get_unit_type_name($unit, $supplier_name)
 {
     if ($supplier_name == "nettolager") {
-        return $supplier_name . ' ' . $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+        return $supplier_name . ' type: ' . $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
     } else if ($supplier_name == "boxdepotet") {
-        return  $supplier_name . ' ' .  $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+        return  $supplier_name . ' type: ' .  $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
     } else if ($supplier_name == "pelican") {
-        return  $supplier_name . ' ' . $unit['m2'] . ' m2';
+        return  $supplier_name . ' type: ' . $unit['m2'] . ' m2';
     }
 }
 

@@ -416,6 +416,7 @@ function get_all_locations_ids_and_partner_department_urls($supplier_name)
         }
     }
 
+    trigger_error('locations: ' . print_r($posts, true), E_USER_NOTICE);
     return $posts;
 }
 

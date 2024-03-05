@@ -30,6 +30,8 @@ function tdp_daily_functions()
     sleep(60);
     import_scraper_data("nettolager");
     sleep(60);
+    import_scraper_data("pelican");
+    sleep(60);
     generate_seo_texts();
     sleep(30);
     generate_top_seo_texts();

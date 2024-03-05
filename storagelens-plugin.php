@@ -40,8 +40,8 @@ register_deactivation_hook(__FILE__, 'tdp_plugin_deactivation_function');
 function register_tdp_menu_page()
 {
     add_menu_page(
-        __('TDP plugin', 'textdomain'), // Page title
-        __('TDP plugin', 'textdomain'),     // Menu title
+        __('StorageLens', 'textdomain'), // Page title
+        __('StorageLens', 'textdomain'),     // Menu title
         'manage_options',                      // Capability
         'storagelens-plugin',                       // Menu slug
         'tdp_menu_page',                 // Function to display the page
@@ -195,14 +195,27 @@ function tdp_menu_page()
                 <input type="hidden" name="tdp_action" value="import_nettolager_scraper_data">
                 <input type="submit" value="<?php _e('Import scraper data for nettolager', 'textdomain'); ?>" class="button">
             </form>
+            <!-- Import scraper data for pelican -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="import_pelican_scraper_data">
+                <input type="submit" value="<?php _e('Import scraper data for pelican', 'textdomain'); ?>" class="button">
+            </form>
             <form method="post" action="">
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
                 <input type="hidden" name="tdp_action" value="remove_boxdepotet_scraper_data">
                 <input type="submit" value="<?php _e('Remove boxdepotet data', 'textdomain'); ?>" class="button">
-                <form method="post" action="">
-                    <?php wp_nonce_field('tdp_action_nonce'); ?>
-                    <input type="hidden" name="tdp_action" value="remove_nettolager_scraper_data">
-                    <input type="submit" value="<?php _e('Remove nettolager data', 'textdomain'); ?>" class="button">
+            </form>
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="remove_nettolager_scraper_data">
+                <input type="submit" value="<?php _e('Remove nettolager data', 'textdomain'); ?>" class="button">
+            </form>
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="remove_pelican_scraper_data">
+                <input type="submit" value="<?php _e('Remove pelican data', 'textdomain'); ?>" class="button">
+            </form>
         </div>
 
 
@@ -312,10 +325,16 @@ function tdp_plugin_handle_post()
             case 'import_nettolager_scraper_data':
                 import_scraper_data("nettolager");
                 break;
+            case 'import_pelican_scraper_data':
+                import_scraper_data("pelican");
+                break;
             case 'remove_boxdepotet_scraper_data':
                 remove_scraper_data("boxdepotet");
             case 'remove_nettolager_scraper_data':
                 remove_scraper_data("nettolager");
+            case 'remove_pelican_scraper_data':
+                remove_scraper_data("pelican");
+
             default:
         }
     }

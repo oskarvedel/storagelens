@@ -37,7 +37,6 @@ function import_scraper_data($supplier_name)
         $sanitized_data = sanitize_nettolager_data($data);
         unset($data);
     } else {
-
         trigger_error('waking the render service', E_USER_NOTICE);
 
         //set the timeout to 5 seconds
@@ -52,9 +51,9 @@ function import_scraper_data($supplier_name)
         trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
         sleep(30);
         trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
-        //set the timeout to 10 minutes
+        //set the timeout to 20 minutes
         add_filter('http_request_timeout', function () {
-            return 600;
+            return 1200;
         });
 
         trigger_error('calling  ' . $supplier_name . ' scraper', E_USER_NOTICE);
@@ -73,12 +72,23 @@ function import_scraper_data($supplier_name)
 
         //check if the response body is empty
         if (empty($response['body'])) {
-            trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
+            trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 30 sec', E_USER_WARNING);
 
             //schedule a new run of the scraper in 5 minutes
             $timestamp = wp_next_scheduled('scraper');
             if ($timestamp == false) {
-                wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
+                wp_schedule_single_event(time() + 30, 'run_scraper_action', array($supplier_name));
+            }
+            return;
+        }
+
+        //if the response body is contains the word "error" then log the error and return
+        if (strpos($response['body'], 'error') !== false) {
+            trigger_error('render ' . $supplier_name . ' response data contains error, scheduling a new call in 30 sec', E_USER_WARNING);
+
+            $timestamp = wp_next_scheduled('scraper');
+            if ($timestamp == false) {
+                wp_schedule_single_event(time() + 30, 'run_scraper_action', array($supplier_name));
             }
             return;
         }
@@ -105,14 +115,19 @@ function import_scraper_data($supplier_name)
         // trigger_error('boxdepotet data: ' . print_r($data, true), E_USER_NOTICE);
         //serialize the data
 
+        // xdebug_break();
+
         if ($supplier_name == "boxdepotet") {
             $sanitized_data = sanitize_boxdepotet_data($data);
         } else if ($supplier_name == "nettolager") {
             $sanitized_data = sanitize_nettolager_data($data);
+        } else if ($supplier_name == "pelican") {
+            $sanitized_data = sanitize_pelican_data($data);
+        } else if ($supplier_name == "shurgard") {
+            // $sanitized_data = sanitize_shurgard_data($data);
         }
         unset($data);
     }
-
 
 
     remove_unit_links($supplier_name);
@@ -178,6 +193,11 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
             // Create the unit links
             foreach ($item['singleLocationsUnitData'] as $unitData) {
                 $unit_type_id = array_search(get_unit_type_name($unitData, $supplier_name), $unit_types);
+                if (isset($unitData['m3'])) {
+                    $title = $title . ' link: ' . $unitData['m2'] . ' m2 / ' . $unitData['m3'] . ' m3';
+                } else {
+                    $title = $title . ' link: ' . $unitData['m2'] . ' m2';
+                }
                 $unit_link_id = wp_insert_post(array(
                     'post_title' => $title  . ' link: ' . $unitData['m2'] . ' m2 / ' . $unitData['m3'] . ' m3',
                     'post_type' => 'unit_link',
@@ -205,6 +225,15 @@ function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_
                 if (isset($unitData['supplier_unit_id'])) {
                     update_post_meta($unit_link_id, 'supplier_unit_id', $unitData['supplier_unit_id']);
                 }
+
+                if (isset($unitData['introPrice'])) {
+                    update_post_meta($unit_link_id, 'intro_price', $unitData['introPrice']);
+                }
+
+                if (isset($unitData['introPeriod'])) {
+                    update_post_meta($unit_link_id, 'intro_period', $unitData['introPeriod']);
+                }
+
 
                 // Add the unit type and gd_place to the unit link
                 update_post_meta($unit_link_id, 'rel_type', $unit_type_id);
@@ -251,7 +280,9 @@ function create_unit_types($unique_units, $user_id, $existing_unit_types, $suppl
 
         // Set the m2 and m3 sizes
         update_post_meta($unit_type_id, 'm2', $unit['m2']);
-        update_post_meta($unit_type_id, 'm3', $unit['m3']);
+        if (isset($unitData['m3'])) {
+            update_post_meta($unit_type_id, 'm3', $unitData['m3']);
+        }
 
         // Set the unit_type
         update_post_meta($unit_type_id, 'unit_type', 'indoor');
@@ -266,7 +297,13 @@ function create_unit_types($unique_units, $user_id, $existing_unit_types, $suppl
 
 function get_unit_type_name($unit, $supplier_name)
 {
-    return  $supplier_name . ' type: ' . $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+    if ($supplier_name == "nettolager") {
+        return $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+    } else if ($supplier_name == "boxdepotet") {
+        return $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
+    } else if ($supplier_name == "pelican") {
+        return $unit['m2'] . ' m2';
+    }
 }
 
 function get_unique_units($data)
@@ -276,8 +313,11 @@ function get_unique_units($data)
 
     foreach ($data as $item) {
         foreach ($item['singleLocationsUnitData'] as $unitData) {
-            $key = $unitData['m2'] . '-' . $unitData['m3'];
-
+            if (isset($unitData['m3'])) {
+                $key = $unitData['m2'] . '-' . $unitData['m3'];
+            } else {
+                $key = $unitData['m2'];
+            }
             if (!isset($seen[$key])) {
                 $seen[$key] = true;
                 $uniqueUnits[] = $unitData;
@@ -335,6 +375,27 @@ function sanitize_boxdepotet_data($data)
     }, $data);
 }
 
+function sanitize_pelican_data($data)
+{
+    return array_map(function ($location) {
+        $sanitizedData = array_map(function ($unit) {
+            return array(
+                'm2' => str_replace(" m2", "", $unit['m2size']),
+                'price' => floatval(preg_replace("/[^0-9\.]/", "", $unit['price'])),
+                'available' => $unit['available'],
+                'bookUrl' => $unit['link'],
+                'introPrice' => str_replace("-", "", $unit['introPrice']),
+                'introPeriod' => $unit['introPeriod']
+            );
+        }, $location['unitList']);
+
+        return array(
+            'url' => $location['locationDetails']['name'],
+            'singleLocationsUnitData' => $sanitizedData
+        );
+    }, $data);
+}
+
 function get_all_locations_ids_and_partner_department_urls($supplier_name)
 {
     $args = array(
@@ -346,15 +407,20 @@ function get_all_locations_ids_and_partner_department_urls($supplier_name)
 
     $ids = get_posts($args);
 
-    //get the partner department url for each gd_place
     $posts = array();
     foreach ($ids as $id) {
-        $partner_department_url = get_post_meta($id, 'partner_department_url', true);
-        $posts[$id] = $partner_department_url;
+        if ($supplier_name === 'pelican') {
+            $posts[$id] = get_the_title($id);
+        } else {
+            $partner_department_url = get_post_meta($id, 'partner_department_url', true);
+            $posts[$id] = $partner_department_url;
+        }
     }
 
     return $posts;
 }
+
+
 
 function get_unit_types($supplier_name)
 {

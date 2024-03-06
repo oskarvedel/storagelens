@@ -28,7 +28,7 @@ function tdp_daily_functions()
     sleep(60);
     import_scraper_data("boxdepotet");
     sleep(60);
-    import_scraper_data("nettolager");
+    // import_scraper_data("nettolager");
     sleep(60);
     import_scraper_data("pelican");
     sleep(60);

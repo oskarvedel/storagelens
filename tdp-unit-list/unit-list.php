@@ -11,11 +11,16 @@ function generate_default_unit_list_for_all_gd_places()
     foreach ($gd_places as $gd_place) {
         $gd_place_id = $gd_place->ID;
 
+        update_post_meta($gd_place_id, 'default_archive_page_unit_list', "");
+
         //generate archive unit list
         $default_archive_page_unit_list = generate_default_unit_list_for_single_gd_place($gd_place_id, 1);
         if ($default_archive_page_unit_list) {
             update_post_meta($gd_place_id, 'default_archive_page_unit_list', $default_archive_page_unit_list);
         }
+
+        update_post_meta($gd_place_id, 'default_department_page_unit_list', "");
+
         //generate department unit list
         $default_department_page_unit_list = generate_default_unit_list_for_single_gd_place($gd_place_id, 0);
         if ($default_department_page_unit_list) {
@@ -133,34 +138,35 @@ function generate_unit_list($finalOutput, $partner, $lokationId, $available_unit
 
         $output = '<div class="outer-depotrum-row">';
 
+        // xdebug_break();
         if ($isArchivePage) {
-            if ($partner) {
-                if ($depotrum === $lastElement) {
-                    $output .= '<a href="' . $permalink . '" class="depotrum-row yellowhover partner last" >';
-                } else {
-                    $output .= '<a href="' . $permalink . '" class="depotrum-row yellowhover partner">';
-                }
+            // if ($partner) {
+            if ($depotrum === $lastElement) {
+                $output .= '<a href="' . $permalink . '" class="depotrum-row yellowhover partner last" >';
             } else {
-                if ($depotrum === $lastElement) {
-                    $output .= '<div class="depotrum-row non-partner last">';
-                } else {
-                    $output .= '<div class="depotrum-row non-partner">';
-                }
+                $output .= '<a href="' . $permalink . '" class="depotrum-row yellowhover partner">';
             }
+            // } else {
+            //     if ($depotrum === $lastElement) {
+            //         $output .= '<div class="depotrum-row non-partner last">';
+            //     } else {
+            //         $output .= '<div class="depotrum-row non-partner">';
+            //     }
+            // }
         } else {
-            if ($partner) {
-                if ($depotrum === $lastElement) {
-                    $output .= '<div class="depotrum-row partner yellowhover last">';
-                } else {
-                    $output .= '<div class="depotrum-row yellowhover partner">';
-                }
+            // if ($partner) {
+            if ($depotrum === $lastElement) {
+                $output .= '<div class="depotrum-row partner yellowhover last">';
             } else {
-                if ($depotrum === $lastElement) {
-                    $output .= '<div class="depotrum-row non-partner last">';
-                } else {
-                    $output .= '<div class="depotrum-row non-partner">';
-                }
+                $output .= '<div class="depotrum-row yellowhover partner">';
             }
+            // } else {
+            //     if ($depotrum === $lastElement) {
+            //         $output .= '<div class="depotrum-row non-partner last">';
+            //     } else {
+            //         $output .= '<div class="depotrum-row non-partner">';
+            //     }
+            // }
         }
 
         if ($enable_booking && !$isArchivePage) {
@@ -176,7 +182,7 @@ function generate_unit_list($finalOutput, $partner, $lokationId, $available_unit
         } else {
             $output .= '<div class="flex-container-2">';
         }
-        $output .= generate_price_column($price, $price_per_m3_per_month, $partner, $isArchivePage, $enable_booking);
+        $output .= generate_price_column_v2_show_non_partner_units_version($price, $price_per_m3_per_month, $partner, $isArchivePage, $enable_booking);
 
 
         $output .= generate_navigation_column($partner, $id, $enable_booking, $isArchivePage);
@@ -184,11 +190,11 @@ function generate_unit_list($finalOutput, $partner, $lokationId, $available_unit
         $output .= '</div>';
 
         if ($isArchivePage) {
-            if ($partner) {
-                $output .= '</a>';
-            } else {
-                $output .= '</div>';
-            }
+            // if ($partner) {
+            $output .= '</a>';
+            // } else {
+            //     $output .= '</div>';
+            // }
         } else {
             $output .= '</div>';
         }
@@ -211,12 +217,12 @@ function generate_unit_list($finalOutput, $partner, $lokationId, $available_unit
 
 function generate_view_all_button($permalink, $partner, $num_of_available_units, $gd_place_title, $isArchivePage = 0)
 {
-    if ($isArchivePage && $partner) {
-        if ($num_of_available_units > 8) {
-            $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ' . $num_of_available_units . ' ledige rum hos ' . $gd_place_title . '</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
-        } else {
-            $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ledige rum</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
-        }
+    // if ($isArchivePage && $partner) {
+    if ($num_of_available_units > 8) {
+        $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ' . $num_of_available_units . ' ledige rum hos ' . $gd_place_title . '</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
+        // } else {
+        //     $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ledige rum</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
+        // }
         return $finalOutput;
     } else {
         return '';
@@ -238,24 +244,52 @@ function generate_price_column($price, $price_per_m3_per_month, $partner, $isArc
         $output = '<div class="price-column vertical-center">';
     }
     if ($price_per_m3_per_month) {
-        if ($price_per_m3_per_month && $partner) {
+        // if ($price_per_m3_per_month && $partner) {
+        $output .= '<span class="price partner">' . round($price_per_m3_per_month, 2) . ' kr. / m³</span>';
+        $output .= '<div class="break"></div>';
+        $output .= '<span class="month">pr. måned</span>';
+        // } else if ($price_per_m3_per_month && $partner != 1) {
+        $output .= '<span class="price non-partner">' . round($price_per_m3_per_month, 2) . ' kr. / m³</span>';
+        $output .= '<div class="break"></div>';
+        $output .= '<span class="month">pr. måned</span>';
+        // } else {
+        //     $output .= '<span class="month">Pris ukendt</span>';
+        // }
+    } else {
+        // if ($price && $partner) {
+        $output .= '<span class="price partner">' . round($price, 2) . ' kr.</span>';
+        $output .= '<div class="break"></div>';
+        $output .= '<span class="month">pr. måned</span>';
+        // } else if ($price && $partner != 1) {
+        //     $output .= '<span class="price non-partner">' . round($price, 2) . ' kr.</span>';
+        //     $output .= '<div class="break"></div>';
+        //     $output .= '<span class="month">pr. måned</span>';
+        // } else {
+        //     $output .= '<span class="month">Pris ukendt</span>';
+        // }
+    }
+    $output .= '</div>';
+    return $output;
+}
+
+function generate_price_column_v2_show_non_partner_units_version($price, $price_per_m3_per_month, $partner, $isArchivePage, $enable_booking)
+{
+    if ($enable_booking && !$isArchivePage) {
+        $output = '<div class="price-column vertical-center booking-enabled">';
+    } else {
+        $output = '<div class="price-column vertical-center">';
+    }
+    if ($price_per_m3_per_month) {
+        if ($price_per_m3_per_month) {
             $output .= '<span class="price partner">' . round($price_per_m3_per_month, 2) . ' kr. / m³</span>';
-            $output .= '<div class="break"></div>';
-            $output .= '<span class="month">pr. måned</span>';
-        } else if ($price_per_m3_per_month && $partner != 1) {
-            $output .= '<span class="price non-partner">' . round($price_per_m3_per_month, 2) . ' kr. / m³</span>';
             $output .= '<div class="break"></div>';
             $output .= '<span class="month">pr. måned</span>';
         } else {
             $output .= '<span class="month">Pris ukendt</span>';
         }
     } else {
-        if ($price && $partner) {
+        if ($price) {
             $output .= '<span class="price partner">' . round($price, 2) . ' kr.</span>';
-            $output .= '<div class="break"></div>';
-            $output .= '<span class="month">pr. måned</span>';
-        } else if ($price && $partner != 1) {
-            $output .= '<span class="price non-partner">' . round($price, 2) . ' kr.</span>';
             $output .= '<div class="break"></div>';
             $output .= '<span class="month">pr. måned</span>';
         } else {
@@ -372,65 +406,65 @@ function generate_unit_desc_column($relTypeId, $unit_type, $m2, $m3, $container_
         if ($m2 && $m3) {
             $output .= generate_unit_size_smallbold_text($m2, $m3, $partner);
             $output .= '<div class="break"></div>';
-            if ($partner) {
-                $output .= '<span class="bigbold truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
-            } else {
-                $output .= '<span class="normal truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
-            }
+            // if ($partner) {
+            $output .= '<span class="bigbold truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
+            // } else {
+            //     $output .= '<span class="normal truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
+            // }
             $output .= '<div class="break"></div>';
-            if ($partner) {
-                $output .= '<span class="detaileddesc truncate-text">Indendørs depotrum på ' . number_format($m2, 1, ',', '') . ' m² / ' . number_format($m3, 1, ',', '') . ' m³</span>';
-            }
+            // if ($partner) {
+            $output .= '<span class="detaileddesc truncate-text">Indendørs depotrum på ' . number_format($m2, 1, ',', '') . ' m² / ' . number_format($m3, 1, ',', '') . ' m³</span>';
+            // }
         } else if ($m2) {
             $output .= generate_unit_size_smallbold_text($m2, $m3, $partner);
             $output .= '<div class="break"></div>';
-            if ($partner) {
-                $output .= '<span class="bigbold truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
-            } else {
-                $output .= '<span class="big truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
-            }
+            // if ($partner) {
+            $output .= '<span class="bigbold truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
+            // } else {
+            //     $output .= '<span class="big truncate-text">' . number_format($m2, 1, ',', '') . ' m²</span>';
+            // }
             $output .= '<div class="break"></div>';
-            if ($partner) {
-                $output .= '<span class="detaileddesc truncate-text">Indendørs depotrum på ' . number_format($m2, 1, ',', '') . ' m²</span>';
-            }
+            // if ($partner) {
+            $output .= '<span class="detaileddesc truncate-text">Indendørs depotrum på ' . number_format($m2, 1, ',', '') . ' m²</span>';
+            // }
         } else if ($m3) {
             $output .= generate_unit_size_smallbold_text($m2, $m3, $partner);
             $output .= '<div class="break"></div>';
-            if ($partner) {
-                $output .= '<span class="bigbold truncate-text">' . number_format($m3, 1, ',', '') . ' m³</span>';
-            } else {
-                $output .= '<span class="big truncate-text">' . number_format($m3, 1, ',', '') . ' m³</span>';
-            }
+            // if ($partner) {
+            $output .= '<span class="bigbold truncate-text">' . number_format($m3, 1, ',', '') . ' m³</span>';
+            // } else {
+            //     $output .= '<span class="big truncate-text">' . number_format($m3, 1, ',', '') . ' m³</span>';
+            // }
             $output .= '<div class="break"></div>';
-            if ($partner) {
-                $output .= '<span class="detaileddesc truncate-text">Indendørs depotrum på ' . number_format($m3, 1, ',', '') . ' m³</span>';
-            }
+            // if ($partner) {
+            $output .= '<span class="detaileddesc truncate-text">Indendørs depotrum på ' . number_format($m3, 1, ',', '') . ' m³</span>';
+            // }
         }
     } else if ($unit_type == "classic_storage") {
         $output .= '<span class="smallbold truncate-text">Opmagasinering af indbo</span>';
         $output .= '<div class="break"></div>';
-        if ($partner) {
-            $output .= '<span class="big truncate-text" style="">Møbelopbevaring</span>';
-        } else {
-            $output .= '<span class="big truncate-text">Opmagasinering</span>';
-        }
-        if ($partner) {
-            $output .= '<div class="break"></div>';
-            $output .= '<span class="detaileddesc truncate-text">Opbevaring på opvarmet lagerhotel</span>';
-        }
+        // if ($partner) {
+        $output .= '<span class="big truncate-text" style="">Møbelopbevaring</span>';
+        // } else {
+        //     $output .= '<span class="big truncate-text">Opmagasinering</span>';
+        // }
+        // if ($partner) {
+        $output .= '<div class="break"></div>';
+        $output .= '<span class="detaileddesc truncate-text">Opbevaring på opvarmet lagerhotel</span>';
+        // }
         $output .= '<div class="break"></div>';
     } else if ($unit_type == "big_box") {
         $output .= '<span class="smallbold truncate-text">Opmagasinering i big box</span>';
         $output .= '<div class="break"></div>';
-        if ($partner) {
-            $output .= '<span class="big truncate-text" style="">Big Box på 6 m³</span>';
-        } else {
-            $output .= '<span class="big truncate-text">Opmagasinering i lukket trækasse på 6 m³</span>';
-        }
-        if ($partner) {
-            $output .= '<div class="break"></div>';
-            $output .= '<span class="detaileddesc truncate-text truncate-text">Opbevaring i 6m³</span>';
-        }
+        // if ($partner) {
+        $output .= '<span class="big truncate-text" style="">Big Box på 6 m³</span>';
+        // } else {
+        //     $output .= '<span class="big truncate-text">Opmagasinering i lukket trækasse på 6 m³</span>';
+        // }
+        // if ($partner) {
+        $output .= '<div class="break"></div>';
+        $output .= '<span class="detaileddesc truncate-text truncate-text">Opbevaring i 6m³</span>';
+        // }
         $output .= '<div class="break"></div>';
     }
 
@@ -441,9 +475,9 @@ function generate_unit_desc_column($relTypeId, $unit_type, $m2, $m3, $container_
 
 function generate_unit_size_smallbold_text($m2, $m3, $partner)
 {
-    if ($partner != 1) {
-        return '';
-    }
+    // if ($partner != 1) {
+    //     return '';
+    // }
     if ($m2) {
         $m2 = floatval($m2); // Convert m2 to integer if it's a string
         if ($m2 <= 1) {
@@ -491,9 +525,9 @@ function generate_unit_size_smallbold_text($m2, $m3, $partner)
 
 function generate_unit_illustration_column($relTypeId, $unit_type, $m2, $m3, $container_type, $isolated_container, $partner)
 {
-    if ($partner != 1) {
-        return '';
-    }
+    // if ($partner != 1) {
+    //     return '';
+    // }
     if ($unit_type == "container") {
         if ($container_type == "8 feet") {
             $image_url = plugins_url('size-illustrations/10 feet.png', __FILE__);

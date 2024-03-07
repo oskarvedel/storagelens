@@ -330,11 +330,13 @@ function tdp_plugin_handle_post()
                 break;
             case 'remove_boxdepotet_scraper_data':
                 remove_scraper_data("boxdepotet");
+                break;
             case 'remove_nettolager_scraper_data':
                 remove_scraper_data("nettolager");
+                break;
             case 'remove_pelican_scraper_data':
                 remove_scraper_data("pelican");
-
+                break;
             default:
         }
     }

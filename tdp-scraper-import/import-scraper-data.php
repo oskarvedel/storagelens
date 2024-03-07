@@ -4,6 +4,23 @@ function remove_scraper_data($supplier_name)
 {
     remove_unit_links($supplier_name);
     remove_unit_types($supplier_name);
+    remove_depotrum_custom_fields($supplier_name);
+}
+
+function remove_depotrum_custom_fields($supplier_name)
+{
+    $args = array(
+        'post_type' => 'gd_place',
+        'author_name' => $supplier_name,
+        'posts_per_page' => -1,
+        'fields' => 'ids'
+    );
+
+    $ids = get_posts($args);
+
+    foreach ($ids as $id) {
+        delete_post_meta($id, 'depotrum');
+    }
 }
 
 function import_scraper_data($supplier_name)

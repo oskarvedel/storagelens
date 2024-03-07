@@ -7,22 +7,6 @@ function remove_scraper_data($supplier_name)
     remove_depotrum_custom_fields($supplier_name);
 }
 
-function remove_depotrum_custom_fields($supplier_name)
-{
-    $args = array(
-        'post_type' => 'gd_place',
-        'author_name' => $supplier_name,
-        'posts_per_page' => -1,
-        'fields' => 'ids'
-    );
-
-    $ids = get_posts($args);
-
-    foreach ($ids as $id) {
-        delete_post_meta($id, 'depotrum');
-    }
-}
-
 function import_scraper_data($supplier_name)
 {
     trigger_error('scraper started', E_USER_NOTICE);
@@ -174,6 +158,22 @@ function import_scraper_data($supplier_name)
     return;
 }
 
+function remove_depotrum_custom_fields($supplier_name)
+{
+    $args = array(
+        'post_type' => 'gd_place',
+        'author_name' => $supplier_name,
+        'posts_per_page' => -1,
+        'fields' => 'ids'
+    );
+
+    $ids = get_posts($args);
+
+    foreach ($ids as $id) {
+        delete_post_meta($id, 'depotrum');
+    }
+}
+
 function create_unit_links($sanitized_data, $locations_urls, $unit_types, $user_id, $supplier_name)
 {
     $batch_size = 10; // Adjust this to a suitable size
@@ -296,8 +296,8 @@ function create_unit_types($unique_units, $user_id, $existing_unit_types, $suppl
 
         // Set the m2 and m3 sizes
         update_post_meta($unit_type_id, 'm2', $unit['m2']);
-        if (isset($unitData['m3'])) {
-            update_post_meta($unit_type_id, 'm3', $unitData['m3']);
+        if (isset($unit['m3'])) {
+            update_post_meta($unit_type_id, 'm3', $unit['m3']);
         }
 
         // Set the unit_type

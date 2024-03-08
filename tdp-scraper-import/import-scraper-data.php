@@ -9,6 +9,7 @@ function remove_scraper_data($supplier_name)
 
 function import_scraper_data($supplier_name)
 {
+    xdebug_break();
     trigger_error('scraper started', E_USER_NOTICE);
     // Get the user ID for the supplier
     $user = get_user_by('login', $supplier_name);
@@ -50,7 +51,7 @@ function import_scraper_data($supplier_name)
         wp_remote_get($url);
         //sleep for 1 min while the service spins up
         trigger_error('sleeping for 30 seconds to let render spin up', E_USER_NOTICE);
-        sleep(30);
+        // sleep(30);
         trigger_error('sleep over, calling render scrape function', E_USER_NOTICE);
         //set the timeout to 20 minutes
         add_filter('http_request_timeout', function () {
@@ -103,10 +104,10 @@ function import_scraper_data($supplier_name)
 
         //check if there is any data
         if (empty($data)) {
-            trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 2 mins', E_USER_WARNING);
+            trigger_error('render ' . $supplier_name . ' response data is empty, scheduling a new call in 1 mins', E_USER_WARNING);
             $timestamp = wp_next_scheduled('scraper');
             if ($timestamp == false) {
-                wp_schedule_single_event(time() + 120, 'run_scraper_action', array($supplier_name));
+                wp_schedule_single_event(time() + 60, 'run_scraper_action', array($supplier_name));
             }
             return;
             return;
@@ -124,6 +125,8 @@ function import_scraper_data($supplier_name)
             $sanitized_data = sanitize_nettolager_data($data);
         } else if ($supplier_name == "pelican") {
             $sanitized_data = sanitize_pelican_data($data);
+        } else if ($supplier_name == "cityselfstorage") {
+            $sanitized_data = sanitize_cityselfstorage_data($data);
         } else if ($supplier_name == "shurgard") {
             // $sanitized_data = sanitize_shurgard_data($data);
         }
@@ -319,6 +322,8 @@ function get_unit_type_name($unit, $supplier_name)
         return  $supplier_name . ' type: ' .  $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
     } else if ($supplier_name == "pelican") {
         return  $supplier_name . ' type: ' . $unit['m2'] . ' m2';
+    } else if ($supplier_name == "cityselfstorage") {
+        return  $supplier_name . ' type: ' . $unit['m2'] . ' m2 / ' . $unit['m3'] . ' m3';
     }
 }
 
@@ -329,6 +334,7 @@ function get_unique_units($data)
 
     foreach ($data as $item) {
         foreach ($item['singleLocationsUnitData'] as $unitData) {
+
             if (isset($unitData['m3'])) {
                 $key = $unitData['m2'] . '-' . $unitData['m3'];
             } else {
@@ -407,6 +413,28 @@ function sanitize_pelican_data($data)
 
         return array(
             'url' => $location['locationDetails']['name'],
+            'singleLocationsUnitData' => $sanitizedData
+        );
+    }, $data);
+}
+
+function sanitize_cityselfstorage_data($data)
+{
+    return array_map(function ($location) {
+        $sanitizedData = array_map(function ($unit) {
+            return array(
+                'm2' => str_replace(" m2", "", $unit['size']),
+                'm3' => str_replace(" m³", "", $unit['volume']),
+                'price' => floatval(preg_replace("/[^0-9\.]/", "", $unit['price'])),
+                'available' => "1",
+                'bookUrl' => $unit['link'],
+                'introPrice' => str_replace("-", "", $unit['introPrice']),
+                'introPeriod' => $unit['introPeriod']
+            );
+        }, $location['unitList']);
+
+        return array(
+            'url' => $location['locationUrl'],
             'singleLocationsUnitData' => $sanitizedData
         );
     }, $data);

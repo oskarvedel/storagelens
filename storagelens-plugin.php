@@ -201,6 +201,12 @@ function tdp_menu_page()
                 <input type="hidden" name="tdp_action" value="import_pelican_scraper_data">
                 <input type="submit" value="<?php _e('Import scraper data for pelican', 'textdomain'); ?>" class="button">
             </form>
+            <!-- Import scraper data for City Self Storage -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="import_cityselfstorage_scraper_data">
+                <input type="submit" value="<?php _e('Import scraper data for City Self Storage', 'textdomain'); ?>" class="button">
+            </form>
             <form method="post" action="">
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
                 <input type="hidden" name="tdp_action" value="remove_boxdepotet_scraper_data">
@@ -215,6 +221,11 @@ function tdp_menu_page()
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
                 <input type="hidden" name="tdp_action" value="remove_pelican_scraper_data">
                 <input type="submit" value="<?php _e('Remove pelican data', 'textdomain'); ?>" class="button">
+            </form>
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="remove_cityselfstorage_scraper_data">
+                <input type="submit" value="<?php _e('Remove cityselfstorage data', 'textdomain'); ?>" class="button">
             </form>
         </div>
 
@@ -328,6 +339,9 @@ function tdp_plugin_handle_post()
             case 'import_pelican_scraper_data':
                 import_scraper_data("pelican");
                 break;
+            case 'import_cityselfstorage_scraper_data':
+                import_scraper_data("cityselfstorage");
+                break;
             case 'remove_boxdepotet_scraper_data':
                 remove_scraper_data("boxdepotet");
                 break;
@@ -336,6 +350,9 @@ function tdp_plugin_handle_post()
                 break;
             case 'remove_pelican_scraper_data':
                 remove_scraper_data("pelican");
+                break;
+            case 'remove_cityselfstorage_scraper_data':
+                remove_scraper_data("cityselfstorage");
                 break;
             default:
         }

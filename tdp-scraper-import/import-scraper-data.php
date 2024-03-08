@@ -34,6 +34,7 @@ function import_scraper_data($supplier_name)
         $data = json_decode($json, true);
         unset($json);
 
+        // xdebug_break();
         //serialize the data
         $sanitized_data = sanitize_nettolager_data($data);
         unset($data);
@@ -422,8 +423,8 @@ function sanitize_cityselfstorage_data($data)
     return array_map(function ($location) {
         $sanitizedData = array_map(function ($unit) {
             return array(
-                'm2' => str_replace(" m2", "", $unit['size']),
-                'm3' => str_replace(" m³", "", $unit['volume']),
+                'm2' => floatval(str_replace(" m2", "", $unit['size'])),
+                'm3' => floatval(str_replace(" m³", "", $unit['volume'])),
                 'price' => floatval(preg_replace("/[^0-9\.]/", "", $unit['price'])),
                 'available' => "1",
                 'bookUrl' => $unit['link'],

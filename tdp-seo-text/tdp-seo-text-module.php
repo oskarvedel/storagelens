@@ -57,6 +57,15 @@ function top_seo_text_func()
 
 add_shortcode('gd_location_top_seo_text_shortcode', 'top_seo_text_func');
 
+function meta_description_func()
+{
+    $id = extract_geolocation_id_via_url();
+    $meta_description = get_post_meta($id, 'meta_description', true);
+    echo  "<span class='top-seo-text'>" .  $meta_description . "</span>";
+}
+
+add_shortcode('gd_location_meta_description_shortcode', 'meta_description_func');
+
 function seo_text_func()
 {
     $id = extract_geolocation_id_via_url();

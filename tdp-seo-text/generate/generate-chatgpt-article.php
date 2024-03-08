@@ -91,8 +91,6 @@ function generate_chatgpt_seo_article($prompt)
           // update_post_meta($geolocation_id, 'description', $message);
      }
 
-     xdebug_break();
-
      //structure article with chatgpt 4
      $messages = [
           ["role" => "user", "content" =>  "Giv denne artikel en struktur med 3-4 passende underoverskrifter. Sæt h3-tags om underoverskrifterne. : artikel:" . $response],

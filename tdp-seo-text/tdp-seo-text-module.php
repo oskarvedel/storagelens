@@ -8,6 +8,7 @@ require_once dirname(__FILE__) . '/generate/generate-meta-titles.php';
 require_once dirname(__FILE__) . '/generate/generate-meta-descriptions.php';
 require_once dirname(__FILE__) . '/generate/generate-chatgpt-descriptions.php';
 require_once dirname(__FILE__) . '/generate/generate-chatgpt-short-descriptions.php';
+require_once dirname(__FILE__) . '/generate/generate-chatgpt-article.php';
 
 
 require_once dirname(__FILE__) . '/gd_location-metadata-shortcode.php';

@@ -228,6 +228,16 @@ function tdp_menu_page()
                 <input type="submit" value="<?php _e('Remove cityselfstorage data', 'textdomain'); ?>" class="button">
             </form>
         </div>
+        <div class="tdp-section">
+            <!-- generate chatgpt article -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="generate chatgpt article">
+                <input type="text" name="user_input" placeholder="Enter your text here" required>
+                <input type="submit" value="<?php _e('Generate chatgpt article', 'textdomain'); ?>" class="button">
+            </form>
+
+        </div>
 
 
         <!-- style the admin page -->
@@ -354,6 +364,9 @@ function tdp_plugin_handle_post()
             case 'remove_cityselfstorage_scraper_data':
                 remove_scraper_data("cityselfstorage");
                 break;
+            case 'generate chatgpt article':
+                $user_input = $_POST['user_input'];
+                generate_chatgpt_seo_article($user_input);
             default:
         }
     }

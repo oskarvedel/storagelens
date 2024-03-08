@@ -9,7 +9,6 @@ function remove_scraper_data($supplier_name)
 
 function import_scraper_data($supplier_name)
 {
-    xdebug_break();
     trigger_error('scraper started', E_USER_NOTICE);
     // Get the user ID for the supplier
     $user = get_user_by('login', $supplier_name);

@@ -49,7 +49,11 @@ function generate_seo_texts()
 
                if ($location_img) {
                     //replace the second <p> tag with "<p class="three-columns">[location img]<br>"
-                    $description = preg_replace('/<p>/', '<p class="three-columns">[location img]<br>', $description, 1);
+                    $i = 0;
+                    $description = preg_replace_callback('/<p>/', function ($matches) use (&$i, $location_img) {
+                         $i++;
+                         return $i == 2 ? '<p class="three-columns">[location img]<br>' : $matches[0];
+                    }, $description);
                }
 
                if ($location_video) {

@@ -55,7 +55,7 @@ function generate_seo_texts()
 
                if ($location_video) {
                     //replace the third <p> tag with "<p class="three-columns">[location video]<br>"
-                    $description = preg_replace('/<p>/', '<p class="three-columns">[location video]<br>', $description, 1);
+                    $description = strrev(preg_replace(strrev("/<p>/"), strrev('<p class="three-columns">[location video]<br>'), strrev($description), 1));
                }
 
                //replace all of the other <p> tags with "<p class="three-columns">"

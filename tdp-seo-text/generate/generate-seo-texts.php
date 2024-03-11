@@ -116,7 +116,7 @@ function replace_image_variables($input_text, $geolocation_id, $archive_title_tr
      //insert location image
      $location_img_id = get_post_meta($geolocation_id, 'location_img', true);
      $location_img_url = wp_get_attachment_url($location_img_id);
-     $input_text = str_replace("[location img]", '<img src="' . $location_img_url . '" alt="Billede af ' . $archive_title_trimmed . '" class="location-img">', $input_text);
+     $input_text = str_replace("[location img]", '<img src="' . $location_img_url . '" alt="Billede af depotrum i ' . $archive_title_trimmed . '" class="location-img">', $input_text);
 
      //insert location video
      $location_video = get_post_meta($geolocation_id, 'video_url', true);

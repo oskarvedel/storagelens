@@ -2,15 +2,11 @@
 
 function generate_seo_texts()
 {
-     // xdebug_break();
      $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
      foreach ($geolocations as $geolocation) {
           $geolocation_id = $geolocation->ID;
 
-          // if ($geolocation_id == 6252) {
-          //      xdebug_break();
-          // }
 
           $archive_title_trimmed = get_the_title($geolocation_id);
 
@@ -43,6 +39,9 @@ function generate_seo_texts()
 
           //add content to output
           if ($description) {
+               //clean up the description p tags
+               $description = clean_chatgpt_description_p_tags($description);
+
                // $output .= get_seo_text($archive_title_trimmed, $description_title_candidates);
 
                //replace the first <p> tag with "<p class="three-columns">[map img]<br>"
@@ -378,4 +377,44 @@ function seeded_rand($min, $max, $seed)
 
      // Generate and return a random number
      return mt_rand($min, $max);
+}
+
+function clean_chatgpt_description_p_tags($description)
+{
+     // xdebug_break();
+     // Split HTML content by <h2> tag
+     $sections = explode('<h2>', $description);
+
+     // Loop through each section
+     foreach ($sections as $key => $section) {
+          // Check if </p> exists in the section
+          if (strpos($section, '</p>') !== false) {
+               // Split the section by </p> tags
+               $paragraphs = explode('</p>', $section);
+
+               //search and replace all <p> and </p> tags from the paragraphs
+               foreach ($paragraphs as $key2 => $paragraph) {
+                    $paragraphs[$key2] = preg_replace('/<p>/', '', $paragraph);
+                    $paragraphs[$key2] = preg_replace('/<\/p>/', '', $paragraphs[$key2]);
+               }
+
+               //add a h2 tag to the beginning of the section
+               $paragraphs[0] = '<h2>' . $paragraphs[0];
+
+               //find and replace "</h2>" with "</h2><p>" in the first paragraph
+               $paragraphs[0] = preg_replace('/<\/h2>/', '</h2><p>', $paragraphs[0]);
+
+
+               // Combine all paragraphs into one without any separator
+               $sections[$key] = implode(' ', $paragraphs);
+
+               //add a closing p tag to the end of the section
+               $sections[$key] = $sections[$key] . '</p>';
+          }
+     }
+
+     // Implode sections back together
+     $cleaned_html = implode('', $sections);
+
+     return $cleaned_html;
 }

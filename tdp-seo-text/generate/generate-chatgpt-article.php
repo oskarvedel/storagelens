@@ -48,7 +48,7 @@ function generate_chatgpt_seo_article($prompt)
      $data = [
           'model' => 'ft:gpt-3.5-turbo-0125:personal::90W9CS0T', // specifying the model
           'messages' => $messages, // your prompt
-          'max_tokens' => 3000, // increase as needed
+          'max_tokens' => 4000, // increase as needed
      ];
 
      // Initialize cURL session
@@ -83,65 +83,65 @@ function generate_chatgpt_seo_article($prompt)
      $response = $responseData['choices'][0]['message']['content'];
 
      if (strlen($response) < 150) {
-          trigger_error("generated chatgpt description was under 150 chars, stopped the script", E_USER_WARNING);
+          trigger_error("generated chatgpt 3.5 result was under 150 chars, stopped the script", E_USER_WARNING);
           exit();
      }
 
-     if (strlen($response) > 50) {
-          // update_post_meta($geolocation_id, 'description', $message);
-     }
+     trigger_error("gpt3.5 article: " . $prompt .  " " . $response, E_USER_NOTICE);
 
-     //structure article with chatgpt 4
-     $messages = [
-          ["role" => "user", "content" =>  "Giv denne artikel en struktur med 3-4 passende underoverskrifter. Sæt h3-tags om underoverskrifterne. : artikel:" . $response],
-     ];
+     // //structure article with chatgpt 4
+     // $messages = [
+     //      ["role" => "user", "content" =>  "Giv denne artikel en struktur med 3-4 passende underoverskrifter. Sæt h3-tags om underoverskrifterne. : artikel:" . $response],
+     // ];
 
-     // The data array
-     $data = [
-          'model' => 'gpt-4', // specifying the model
-          'messages' => $messages, // your prompt
-          'max_tokens' => 6000, // increase as needed
-     ];
+     // // The data array
+     // $data = [
+     //      'model' => 'gpt-4', // specifying the model
+     //      'messages' => $messages, // your prompt
+     //      'max_tokens' => 6000, // increase as needed
+     // ];
 
-     // Initialize cURL session
-     $ch = curl_init();
+     // // Initialize cURL session
+     // $ch = curl_init();
 
-     // Set cURL options
-     curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions'); // API URL
-     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-     curl_setopt($ch, CURLOPT_POST, true);
-     curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-     curl_setopt($ch, CURLOPT_HTTPHEADER, [
-          'Content-Type: application/json',
-          "Authorization: Bearer $api_key"
-     ]);
+     // // Set cURL options
+     // curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions'); // API URL
+     // curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+     // curl_setopt($ch, CURLOPT_POST, true);
+     // curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+     // curl_setopt($ch, CURLOPT_HTTPHEADER, [
+     //      'Content-Type: application/json',
+     //      "Authorization: Bearer $api_key"
+     // ]);
 
-     $response = "";
-     // Execute cURL session and get the response
-     $response = curl_exec($ch);
+     // $response = "";
+     // // Execute cURL session and get the response
+     // $response = curl_exec($ch);
 
-     if (curl_errno($ch)) {
-          $curlErrorMessage = curl_error($ch);
-          trigger_error('cURL Error: ' . $curlErrorMessage, E_USER_WARNING);
-          // break;
-     }
+     // if (curl_errno($ch)) {
+     //      $curlErrorMessage = curl_error($ch);
+     //      trigger_error('cURL Error: ' . $curlErrorMessage, E_USER_WARNING);
+     //      // break;
+     // }
 
-     // Close cURL session
-     curl_close($ch);
+     // // Close cURL session
+     // curl_close($ch);
 
-     // Decode the response
-     $responseData = json_decode($response, true);
+     // // Decode the response
+     // $responseData = json_decode($response, true);
 
-     $message = $responseData['choices'][0]['message']['content'];
+     // $message = $responseData['choices'][0]['message']['content'];
 
-     if (strlen($message) < 150) {
-          trigger_error("generated chatgpt description was under 150 chars, stopped the script", E_USER_WARNING);
-          exit();
-     }
+     // if (strlen($message) < 150) {
+     //      trigger_error("generated chatgpt4 result was under 150 chars, stopped the script", E_USER_WARNING);
+     //      exit();
+     // }
 
-     if (strlen($message) > 50) {
-          // update_post_meta($geolocation_id, 'description', $message);
-     }
+     // //compare the length of the gpt3.5 ($response) and gpt4 ($message) articles, throw error if the gpt4 articls less than 70% of the gpt3.5 article
+     // if (strlen($message) < 0.7 * strlen($response)) {
+     //      trigger_error("gpt4 article was less than 70% of the gpt3.5 article", E_USER_WARNING);
+     // }
+
 
      //make the article title the prompt but remove "skriv artiklen: " in case it's there
      $title = str_replace("skriv artiklen: ", "", $prompt);
@@ -149,9 +149,9 @@ function generate_chatgpt_seo_article($prompt)
      // Create a new post with the article contents and title. Use a html block for the content
      $post = array(
           'post_title'   => $title,
-          'post_content' => '<!-- wp:html -->' . $message . '<!-- /wp:html -->',
+          'post_content' =>  $response,
           'post_status'  => 'draft',
-          'post_author'  => 1,
+          'post_author'  => 10, //majken holm
           'post_type'    => 'post',
           'post_category' => array(139) // Use the ID of the category 'viden-raad'
      );
@@ -159,9 +159,11 @@ function generate_chatgpt_seo_article($prompt)
      // Insert the post into the database
      $post_id = wp_insert_post($post);
 
+     // Set tags for the post
+     wp_set_post_tags($post_id, 'chatgpt article', true);
 
 
-     trigger_error("article: " . $prompt .  " " . $message, E_USER_NOTICE);
+     // trigger_error("article after gpt4: " . $prompt .  " " . $message, E_USER_NOTICE);
 
      // $counter++;
      // }

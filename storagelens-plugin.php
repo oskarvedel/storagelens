@@ -233,7 +233,7 @@ function tdp_menu_page()
             <form method="post" action="">
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
                 <input type="hidden" name="tdp_action" value="generate chatgpt article">
-                <input type="text" name="user_input" placeholder="Enter your text here" required>
+                <textarea name="user_input" placeholder="Enter your text here" required rows="10" cols="50"></textarea>
                 <input type="submit" value="<?php _e('Generate chatgpt article', 'textdomain'); ?>" class="button">
             </form>
 

@@ -2,6 +2,7 @@
 
 function generate_seo_texts()
 {
+     // xdebug_break();
      $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
      foreach ($geolocations as $geolocation) {
@@ -33,12 +34,29 @@ function generate_seo_texts()
 
           $description = get_post_meta($geolocation_id, 'description', true);
 
+          //check if location img exists
+          $location_img = get_post_meta($geolocation_id, 'location_img', true);
+
+          //check if location video exists
+          $location_video = get_post_meta($geolocation_id, 'video_url', true);
+
+
           //add content to output
           if ($description) {
                // $output .= get_seo_text($archive_title_trimmed, $description_title_candidates);
 
                //replace the first <p> tag with "<p class="three-columns">[map img]<br>"
                $description = preg_replace('/<p>/', '<p class="three-columns">[map img]<br>', $description, 1);
+
+               if ($location_img) {
+                    //replace the second <p> tag with "<p class="three-columns">[location img]<br>"
+                    $description = preg_replace('/<p>/', '<p class="three-columns">[location img]<br>', $description, 1);
+               }
+
+               if ($location_video) {
+                    //replace the third <p> tag with "<p class="three-columns">[location video]<br>"
+                    $description = preg_replace('/<p>/', '<p class="three-columns">[location video]<br>', $description, 1);
+               }
 
                //replace all of the other <p> tags with "<p class="three-columns">"
                $description = preg_replace('/<p>/', '<p class="three-columns">', $description);
@@ -94,6 +112,27 @@ function replace_image_variables($input_text, $geolocation_id, $archive_title_tr
      //insert static map
      $static_map = get_post_meta($geolocation_id, 'static_map', true);
      $input_text = str_replace("[map img]", '<img src="' . $static_map . '" alt="Kort over ' . $archive_title_trimmed . '" class="map-img">', $input_text);
+
+     //insert location image
+     $location_img_id = get_post_meta($geolocation_id, 'location_img', true);
+     $location_img_url = wp_get_attachment_url($location_img_id);
+     $input_text = str_replace("[location img]", '<img src="' . $location_img_url . '" alt="Billede af ' . $archive_title_trimmed . '" class="location-img">', $input_text);
+
+     //insert location video
+     $location_video = get_post_meta($geolocation_id, 'video_url', true);
+     if (empty($location_video)) {
+          $input_text = str_replace("[location video]", '', $input_text);
+          return $input_text;
+     }
+
+     // Extract video id from the URL
+     parse_str(parse_url($location_video, PHP_URL_QUERY), $youtube_params);
+     $video_id = $youtube_params['v'];
+
+     // Create YouTube embed URL
+     $youtube_embed_url = 'https://www.youtube.com/embed/' . $video_id . '?aspect_ratio=4:3';
+
+     $input_text = str_replace("[location video]", '<iframe src="' . $youtube_embed_url . '" title="Video af ' . $archive_title_trimmed . '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>', $input_text);
      return $input_text;
 }
 function replace_statistics_data_fields_with_values($input_text, $statistics_data_fields, $geolocation_id)

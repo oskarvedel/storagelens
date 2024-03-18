@@ -16,11 +16,7 @@ require_once dirname(__FILE__) . '/tdp-unit-list/tdp-unit-list-module.php';
 require_once dirname(__FILE__) . '/geolocation-list/geolocation-list-module.php';
 require_once dirname(__FILE__) . '/common/tdp-common.php';
 require_once dirname(__FILE__) . '/common/geolocation_seo_articles.php';
-// include_once('updater.php');
-include_once(WP_PLUGIN_DIR . '/WordPress-GitHub-Plugin-Updater-master/updater.php');
 
-//include /plugins/WordPress-GitHub-Plugin-Updater-master/updater.php
-// include_once plugin_dir_path(__FILE__) . 'WordPress-GitHub-Plugin-Updater-master/updater.php';
 // Define the activation function
 function tdp_plugin_activation_function()
 {
@@ -53,23 +49,6 @@ function register_tdp_menu_page()
         'dashicons-admin-generic',             // Icon URL
         6                                      // Position
     );
-}
-
-if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
-    $config = array(
-        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-        'proper_folder_name' => 'storagelens', // this is the name of the folder your plugin lives in
-        'api_url' => 'https://api.github.com/repos/oskarvedel/storagelens', // the GitHub API url of your GitHub repo
-        'raw_url' => 'https://raw.github.com/oskarvedel/storagelens/main', // the GitHub raw url of your GitHub repo
-        'github_url' => 'https://github.com/oskarvedel/storagelens', // the GitHub url of your GitHub repo
-        'zip_url' => 'https://github.com/oskarvedel/storagelens/zipball/main', // the zip url of the GitHub repo
-        'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
-        'requires' => '3.0', // which version of WordPress does your plugin require?
-        'tested' => '3.3', // which version of WordPress is your plugin tested up to?
-        'readme' => 'README.md', // which file to use as the readme for the version number
-        'access_token' => '', // Access private repositories by authorizing under Plugins > GitHub Updates when this example plugin is installed
-    );
-    new WP_GitHub_Updater($config);
 }
 
 function tdp_menu_page()

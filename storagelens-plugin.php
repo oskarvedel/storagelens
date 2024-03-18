@@ -56,7 +56,7 @@ function register_tdp_menu_page()
 if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
     $config = array(
         'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
-        'proper_folder_name' => 'plugin-name', // this is the name of the folder your plugin lives in
+        'proper_folder_name' => 'storagelens', // this is the name of the folder your plugin lives in
         'api_url' => 'https://api.github.com/repos/oskarvedel/storagelens', // the GitHub API url of your GitHub repo
         'raw_url' => 'https://raw.github.com/oskarvedel/storagelens/main', // the GitHub raw url of your GitHub repo
         'github_url' => 'https://github.com/oskarvedel/storagelens', // the GitHub url of your GitHub repo

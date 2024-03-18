@@ -2,253 +2,258 @@
 
 function import_article_titles()
 {
-    //get all geolocations
-    $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
+  //get all geolocations
+  $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
-    //get the JSON data
-    global $titles;
+  //get the JSON data
+  global $titles;
 
-    //decode the JSON data into an associative array
-    $titles_data = json_decode($titles, true);
+  //decode the JSON data into an associative array
+  $titles_data = json_decode($titles, true);
 
-    //match each geolocation wp title with the json city title
-    $geolocations_array = array();
-    foreach ($geolocations as $geolocation) {
-        $geolocation_id = $geolocation->ID;
-        $geolocation_title = get_the_title($geolocation_id);
+  //match each geolocation wp title with the json city title
+  $geolocations_array = array();
+  foreach ($geolocations as $geolocation) {
+    $geolocation_id = $geolocation->ID;
+    $geolocation_title = get_the_title($geolocation_id);
 
-        foreach ($titles_data['Byer'] as $city => $articles) {
-            if ($geolocation_title == $city) {
-                foreach ($titles_data['Byer'][$geolocation_title] as $seo_article_key => $seo_article_title) {
-                    update_post_meta($geolocation_id, "seoarticle: " . $seo_article_key, $seo_article_title);
-                }
-            }
+    foreach ($titles_data['Byer'] as $city => $articles) {
+      if ($geolocation_title == $city) {
+        foreach ($titles_data['Byer'][$geolocation_title] as $seo_article_key => $seo_article_title) {
+          update_post_meta($geolocation_id, "seoarticle: " . $seo_article_key, $seo_article_title);
         }
-
-        //check if the geolocation title exists as a key in the associative array
-        if (isset($data['Byer'][$geolocation_title])) {
-            //for every article title in the city array, create a post meta with the seo article title key and the value of the article title
-
-        }
+      }
     }
+  }
 }
 
 function write_articles_for_geolocation($geolocation_id)
 {
-    xdebug_break();
-    //get all article titles for the geolocation
-    $seo_article_1 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 1", true);
-    $seo_article_2 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 2", true);
-    $seo_article_3 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 3", true);
-    $seo_article_4 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 4", true);
-    $seo_article_5 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 5", true);
-    $seo_article_6 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 6", true);
+  //get all article titles for the geolocation
+  $seo_article_1 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 1", true);
+  $seo_article_2 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 2", true);
+  $seo_article_3 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 3", true);
+  $seo_article_4 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 4", true);
+  $seo_article_5 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 5", true);
+  $seo_article_6 = get_post_meta($geolocation_id, "seoarticle: SEO-artikel 6", true);
 
-    //create an  array of the article titles
-    $seo_articles = array($seo_article_1, $seo_article_2, $seo_article_3, $seo_article_4, $seo_article_5, $seo_article_6);
 
-    //write the articles
-    foreach ($seo_articles as $seo_article) {
-        $article = generate_geolocation_chatgpt_seo_article($seo_article_1, get_the_title($geolocation_id));
+  //create an  array of the article titles
+  $seo_articles = array($seo_article_1, $seo_article_2, $seo_article_3, $seo_article_4, $seo_article_5, $seo_article_6);
 
-        // Create a new post with the article contents and title. Use a html block for the content
-        $post = array(
-            'post_title'   => $seo_article_1,
-            'post_content' => $article,
-            'post_status'  => 'draft',
-            'post_author'  => 10, //majken holm
-            'post_type'    => 'post',
-            'post_category' => array(139) // Use the ID of the category 'viden-raad'
-        );
+  //remove any empty array keys
+  $seo_articles = array_filter($seo_articles);
 
-        // Insert the post into the database
-        $post_id = wp_insert_post($post);
+  //write the articles
+  foreach ($seo_articles as $seo_article_title) {
+    //check if the seo article title already exists in wp posts
+    $existing_post = get_page_by_title($seo_article_title, OBJECT, 'post');
 
-        // Set tags for the post
-        wp_set_post_tags($post_id, 'chatgpt geolocation seo article', true);
-
-        //set the post category to geolocation-seo-article
-        wp_set_post_categories($post_id, 157);
-
-        //set the post meta key "geolocation" to the geolocation id
-        update_post_meta($post_id, 'geolocation', $geolocation_id);
-
-        //add the article id to the geolocation post meta "seo-articles"
-        $seo_articles = get_post_meta($geolocation_id, 'seo_articles', false);
-        $seo_articles[] = $post_id;
-        update_post_meta($geolocation_id, 'seo_articles', $seo_articles);
+    if ($existing_post) {
+      trigger_error("The article " . $seo_article_title . " already exists", E_USER_WARNING);
+      continue;
     }
+
+    $article = generate_geolocation_chatgpt_seo_article($seo_article_title, get_the_title($geolocation_id));
+
+    // Create a new post with the article contents and title. Use a html block for the content
+    $post = array(
+      'post_title'   => $seo_article_title,
+      'post_content' => $article,
+      'post_status'  => 'draft',
+      'post_author'  => 10, //majken holm
+      'post_type'    => 'post',
+      'post_category' => array(139) // Use the ID of the category 'viden-raad'
+    );
+
+    // Insert the post into the database
+    $post_id = wp_insert_post($post);
+
+    // Set tags for the post
+    wp_set_post_tags($post_id, 'chatgpt geolocation seo article', true);
+
+    //set the post category to geolocation-seo-article
+    wp_set_post_categories($post_id, 157);
+
+    //set the post meta key "geolocation" to the geolocation id
+    update_post_meta($post_id, 'geolocation', $geolocation_id);
+
+    //add the article id to the geolocation post meta "seo-articles"
+    $seo_articles = get_post_meta($geolocation_id, 'seo_articles', false);
+    $seo_articles[] = $post_id;
+    update_post_meta($geolocation_id, 'seo_articles', $seo_articles);
+  }
 }
 
 function generate_geolocation_chatgpt_seo_article($prompt, $geolocation_title)
 {
-    //set option
-    global $statistics;
-    global $statistics_data_fields;
-    global $article_prompt;
-    $api_key = SEO_DESCRIPTIONS_CHATGPT_API_KEY;
+  //set option
+  global $statistics;
+  global $statistics_data_fields;
+  global $article_prompt;
+  $api_key = SEO_DESCRIPTIONS_CHATGPT_API_KEY;
 
-    $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
+  $geolocations = get_posts(array('post_type' => 'geolocations', 'posts_per_page' => -1));
 
-    //capitalize the geolocation title
-    $geolocation_title = ucwords($geolocation_title);
+  //capitalize the geolocation title
+  $geolocation_title = ucwords($geolocation_title);
 
-    $counter = 0;
+  $counter = 0;
 
-    if ($geolocation_title) {
-        //search the geolocations array to find the one that matches the geolocation title
-        foreach ($geolocations as $geolocation) {
-            if ($geolocation->post_title == $geolocation_title) {
-                $geolocation_id = $geolocation->ID;
-                break;
-            }
-        }
+  if ($geolocation_title) {
+    //search the geolocations array to find the one that matches the geolocation title
+    foreach ($geolocations as $geolocation) {
+      if ($geolocation->post_title == $geolocation_title) {
+        $geolocation_id = $geolocation->ID;
+        break;
+      }
+    }
+  }
+
+  if ($geolocation_id) {
+
+    $archive_title_trimmed = get_the_title($geolocation_id);
+
+    $seo_gd_place_list = get_post_meta($geolocation_id, 'seo_gd_place_list', false);
+
+    $num_of_seo_gd_places = count($seo_gd_place_list);
+
+    //replace the ids in seo_gd_place_list with the actual names
+    foreach ($seo_gd_place_list as $key => $value) {
+      $seo_gd_place_list[$key] = get_the_title($value);
     }
 
-    if ($geolocation_id) {
+    //stringify the array
+    $seo_gd_place_list = implode(", ", $seo_gd_place_list);
 
-        $archive_title_trimmed = get_the_title($geolocation_id);
+    //replace the ids with the actual names
+    $seo_num_of_units_available = get_post_meta($geolocation_id, 'seo_num_of_units_available', true);
 
-        $seo_gd_place_list = get_post_meta($geolocation_id, 'seo_gd_place_list', false);
+    // The prompt you want to send to ChatGPT
+    $statitics_prompt_part = replace_variable_placeholders_chatgpt_description($statistics, $statistics_data_fields, $geolocation_id, $num_of_seo_gd_places, $seo_num_of_units_available, $archive_title_trimmed);
 
-        $num_of_seo_gd_places = count($seo_gd_place_list);
+    trigger_error("statistics prompt: " . $statitics_prompt_part, E_USER_NOTICE);
+    //structure article outline
+  } else {
+    trigger_error("geolocation not found", E_USER_WARNING);
+  }
 
-        //replace the ids in seo_gd_place_list with the actual names
-        foreach ($seo_gd_place_list as $key => $value) {
-            $seo_gd_place_list[$key] = get_the_title($value);
-        }
+  $outlineMessage = [
+    ["role" => "system", "content" => "Du er en skribent, der er ekspert i depotrum og opbevaringsrum. Opfør dig som en skribent, der er meget dygtig til SEO-skrivning og taler flydende dansk. Skriv altid 100% unik, SEO-optimeret, menneskeskrevne artikler på dansk som dækker det emne, der er angivet i prompten. Nummerér ikke overskrifterne. Skriv alle ord i titlen og overskrifterne med små bogstaver, undtagen det første ord. Skriv artiklen med dine egne ord i stedet for at kopiere og indsætte fra andre kilder. Overvej kompleksitet og varians, når du skaber indhold, idet du sikrer høje niveauer af begge dele uden at miste specificitet eller kontekst.  Brug fuldt detaljerede afsnit, der engagerer læseren. Skriv i en samtalestil, som om det var skrevet af et menneske (brug en uformel tone, brug personlige pronominer, hold det simpelt, engager læseren, brug aktiv stemme, hold det kort, brug retoriske spørgsmål og inkorporer analogier og metaforer)."],
+    ["role" => "user", "content" =>  "Formulér outlinet/indholdsfortegnelsen/overskrifterne til artiklen: " . $prompt . ". Formulér mellem 4 og 6  relevanteoverskrifter."],
+  ];
 
-        //stringify the array
-        $seo_gd_place_list = implode(", ", $seo_gd_place_list);
+  // The data array
+  $data = [
+    'model' => 'gpt-4', // specifying the model
+    'messages' => $outlineMessage, // your prompt
+    'max_tokens' => 1500, // increase as needed
+  ];
 
-        //replace the ids with the actual names
-        $seo_num_of_units_available = get_post_meta($geolocation_id, 'seo_num_of_units_available', true);
+  // Initialize cURL session
+  $ch = curl_init();
 
-        // The prompt you want to send to ChatGPT
-        $statitics_prompt_part = replace_variable_placeholders_chatgpt_description($statistics, $statistics_data_fields, $geolocation_id, $num_of_seo_gd_places, $seo_num_of_units_available, $archive_title_trimmed);
+  // Set cURL options
+  curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions'); // API URL
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    "Authorization: Bearer $api_key"
+  ]);
 
-        trigger_error("statistics prompt: " . $statitics_prompt_part, E_USER_NOTICE);
-        //structure article outline
-    } else {
-        trigger_error("geolocation not found", E_USER_WARNING);
-    }
+  $response = "";
+  // Execute cURL session and get the response
+  $response = curl_exec($ch);
 
-    $outlineMessage = [
-        ["role" => "system", "content" => "Du er en skribent, der er ekspert i depotrum og opbevaringsrum. Opfør dig som en skribent, der er meget dygtig til SEO-skrivning og taler flydende dansk. Skriv altid 100% unik, SEO-optimeret, menneskeskrevne artikler på dansk som dækker det emne, der er angivet i prompten. Nummerér ikke overskrifterne. Skriv alle ord i titlen og overskrifterne med små bogstaver, undtagen det første ord. Skriv artiklen med dine egne ord i stedet for at kopiere og indsætte fra andre kilder. Overvej kompleksitet og varians, når du skaber indhold, idet du sikrer høje niveauer af begge dele uden at miste specificitet eller kontekst.  Brug fuldt detaljerede afsnit, der engagerer læseren. Skriv i en samtalestil, som om det var skrevet af et menneske (brug en uformel tone, brug personlige pronominer, hold det simpelt, engager læseren, brug aktiv stemme, hold det kort, brug retoriske spørgsmål og inkorporer analogier og metaforer)."],
-        ["role" => "user", "content" =>  "Formulér outlinet/indholdsfortegnelsen/overskrifterne til artiklen: " . $prompt . ". Formulér mellem 4 og 6  relevanteoverskrifter."],
-    ];
+  if (curl_errno($ch)) {
+    $curlErrorMessage = curl_error($ch);
+    trigger_error('cURL Error: ' . $curlErrorMessage, E_USER_WARNING);
+    // break;
+  }
 
-    // The data array
-    $data = [
-        'model' => 'gpt-4', // specifying the model
-        'messages' => $outlineMessage, // your prompt
-        'max_tokens' => 1500, // increase as needed
-    ];
+  // Close cURL session
+  curl_close($ch);
 
-    // Initialize cURL session
-    $ch = curl_init();
+  // Decode the response
+  $responseData = json_decode($response, true);
 
-    // Set cURL options
-    curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions'); // API URL
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        "Authorization: Bearer $api_key"
-    ]);
+  $outlineResponse = $responseData['choices'][0]['message']['content'];
 
-    $response = "";
-    // Execute cURL session and get the response
-    $response = curl_exec($ch);
+  if (strlen($response) < 50) {
+    trigger_error("generated article putline  was under 50 chars, stopped the script", E_USER_WARNING);
+    exit();
+  }
 
-    if (curl_errno($ch)) {
-        $curlErrorMessage = curl_error($ch);
-        trigger_error('cURL Error: ' . $curlErrorMessage, E_USER_WARNING);
-        // break;
-    }
-
-    // Close cURL session
-    curl_close($ch);
-
-    // Decode the response
-    $responseData = json_decode($response, true);
-
-    $outlineResponse = $responseData['choices'][0]['message']['content'];
-
-    if (strlen($response) < 50) {
-        trigger_error("generated article putline  was under 50 chars, stopped the script", E_USER_WARNING);
-        exit();
-    }
-
-    trigger_error("article outline: " . $prompt .  " " . $outlineResponse, E_USER_NOTICE);
+  trigger_error("article outline: " . $prompt .  " " . $outlineResponse, E_USER_NOTICE);
 
 
-    if ($geolocation_id) {
-        $secondprompt = "Skriv artiklen: " . $prompt . " med overskrifterne: " . $outlineResponse . ". Benyt eventuelt statistikken om opbevaring i lokationen " . $geolocation_title . " fra tjekdepot.dk til at skrive artiklen: " . $statitics_prompt_part . ". Lagerhoteller i lokationen: " . $seo_gd_place_list . " Andre instruktioner: " . $article_prompt;
-    } else {
-        $secondprompt = "Skriv artiklen: " . $prompt . " med overskrifterne: " . $outlineResponse . ". Andre instruktioner: " . $article_prompt;
-    }
+  if ($geolocation_id) {
+    $secondprompt = "Skriv artiklen: " . $prompt . " med overskrifterne: " . $outlineResponse . ". Benyt eventuelt statistikken om opbevaring i lokationen " . $geolocation_title . " fra tjekdepot.dk til at skrive artiklen: " . $statitics_prompt_part . ". Lagerhoteller i lokationen: " . $seo_gd_place_list . " Andre instruktioner: " . $article_prompt;
+  } else {
+    $secondprompt = "Skriv artiklen: " . $prompt . " med overskrifterne: " . $outlineResponse . ". Andre instruktioner: " . $article_prompt;
+  }
 
-    $mainArticleMessage = [
-        ["role" => "system", "content" => "Du er en skribent, der er ekspert i depotrum og opbevaringsrum. Opfør dig som en skribent, der er meget dygtig til SEO-skrivning og taler flydende dansk. Skriv altid 100% unik, SEO-optimeret, menneskeskrevne artikler på dansk som dækker det emne, der er angivet i prompten. Nummerér ikke overskrifterne. Skriv alle ord i titlen og overskrifterne med små bogstaver, undtagen det første ord. Skriv artiklen med dine egne ord i stedet for at kopiere og indsætte fra andre kilder. Overvej kompleksitet og varians, når du skaber indhold, idet du sikrer høje niveauer af begge dele uden at miste specificitet eller kontekst.  Brug fuldt detaljerede afsnit, der engagerer læseren. Skriv i en samtalestil, som om det var skrevet af et menneske (brug en uformel tone, brug personlige pronominer, hold det simpelt, engager læseren, brug aktiv stemme, hold det kort, brug retoriske spørgsmål og inkorporer analogier og metaforer)."],
-        ["role" => "user", "content" =>  $secondprompt],
-    ];
+  $mainArticleMessage = [
+    ["role" => "system", "content" => "Du er en skribent, der er ekspert i depotrum og opbevaringsrum. Opfør dig som en skribent, der er meget dygtig til SEO-skrivning og taler flydende dansk. Skriv altid 100% unik, SEO-optimeret, menneskeskrevne artikler på dansk som dækker det emne, der er angivet i prompten. Nummerér ikke overskrifterne. Skriv alle ord i titlen og overskrifterne med små bogstaver, undtagen det første ord. Skriv artiklen med dine egne ord i stedet for at kopiere og indsætte fra andre kilder. Overvej kompleksitet og varians, når du skaber indhold, idet du sikrer høje niveauer af begge dele uden at miste specificitet eller kontekst.  Brug fuldt detaljerede afsnit, der engagerer læseren. Skriv i en samtalestil, som om det var skrevet af et menneske (brug en uformel tone, brug personlige pronominer, hold det simpelt, engager læseren, brug aktiv stemme, hold det kort, brug retoriske spørgsmål og inkorporer analogier og metaforer)."],
+    ["role" => "user", "content" =>  $secondprompt],
+  ];
 
 
-    trigger_error("article prompt: " . $secondprompt, E_USER_NOTICE);
+  trigger_error("article prompt: " . $secondprompt, E_USER_NOTICE);
 
-    // The data array
-    $data = [
-        'model' => 'gpt-4', // specifying the model
-        'messages' => $mainArticleMessage, // your prompt
-        'max_tokens' => 4000, // increase as needed
-    ];
+  // The data array
+  $data = [
+    'model' => 'gpt-4', // specifying the model
+    'messages' => $mainArticleMessage, // your prompt
+    'max_tokens' => 4000, // increase as needed
+  ];
 
-    // Initialize cURL session
-    $ch = curl_init();
+  // Initialize cURL session
+  $ch = curl_init();
 
-    // Set cURL options
-    curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions'); // API URL
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-    curl_setopt($ch, CURLOPT_HTTPHEADER, [
-        'Content-Type: application/json',
-        "Authorization: Bearer $api_key"
-    ]);
+  // Set cURL options
+  curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions'); // API URL
+  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+  curl_setopt($ch, CURLOPT_POST, true);
+  curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+  curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    "Authorization: Bearer $api_key"
+  ]);
 
-    $response = "";
-    // Execute cURL session and get the response
-    $response = curl_exec($ch);
+  $response = "";
+  // Execute cURL session and get the response
+  $response = curl_exec($ch);
 
-    if (curl_errno($ch)) {
-        $curlErrorMessage = curl_error($ch);
-        trigger_error('cURL Error: ' . $curlErrorMessage, E_USER_WARNING);
-        // break;
-    }
+  if (curl_errno($ch)) {
+    $curlErrorMessage = curl_error($ch);
+    trigger_error('cURL Error: ' . $curlErrorMessage, E_USER_WARNING);
+    // break;
+  }
 
-    // Close cURL session
-    curl_close($ch);
+  // Close cURL session
+  curl_close($ch);
 
-    // Decode the response
-    $responseData = json_decode($response, true);
+  // Decode the response
+  $responseData = json_decode($response, true);
 
-    $article = $responseData['choices'][0]['message']['content'];
+  $article = $responseData['choices'][0]['message']['content'];
 
-    if (strlen($article) < 150) {
-        trigger_error("generated article result was under 150 chars, stopped the script", E_USER_WARNING);
-        exit();
-    }
+  if (strlen($article) < 150) {
+    trigger_error("generated article result was under 150 chars, stopped the script", E_USER_WARNING);
+    exit();
+  }
 
-    //make the article title the prompt but remove "skriv artiklen: " in case it's there
-    $title = str_replace("skriv artiklen: ", "", $prompt);
+  //make the article title the prompt but remove "skriv artiklen: " in case it's there
+  $title = str_replace("skriv artiklen: ", "", $prompt);
 
-    trigger_error("finished article: " . $prompt .  " " . $article, E_USER_NOTICE);
+  trigger_error("finished article: " . $prompt .  " " . $article, E_USER_NOTICE);
 
-    trigger_error("generated chatgpt article", E_USER_NOTICE);
+  trigger_error("generated chatgpt article", E_USER_NOTICE);
 
-    return $article;
+  return $article;
 }
 
 $statistics = '

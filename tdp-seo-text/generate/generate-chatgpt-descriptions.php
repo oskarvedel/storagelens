@@ -200,7 +200,6 @@ emner:
 
 undlad emner, der ikke er tilstrækkelig information om. 
 
-
 Prioriter substans og undgå fuffy, fyld-indhold. brug en uhøjtidelig tone uden fyldeord og superlativer. skriv koncist og uden for mange floskler. brug en naturlig professionel, informativ skrivestil og tone. brug ikke pompøse ord. brug kun danske ord. Skriv med selvsikkerhed, brug et klart og præcist sprog, vis ekspertise, og vær gennemsigtig. brug danske formuleringer og sætningskonstruktioner. husk at bruge hvert nøgleord flere gange.
 
 brug nøgleordene i hele artiklen, og brug mindst et af nøgleordene i hver overskrift. brug hvert nøgleord flere gange igennem hele teksten. brug ikke det samme nøgleord i flere overskrifter.

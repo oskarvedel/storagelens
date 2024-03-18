@@ -74,8 +74,6 @@ function extract_geolocation_slug_via_url()
 }
 
 /**
-
-/**
  * Extracts the geolocation ID from the current URL.
  *
  * This function first calls the extract_geolocation_slug_via_url function to get

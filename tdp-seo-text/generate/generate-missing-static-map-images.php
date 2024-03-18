@@ -37,7 +37,7 @@ function generate_missing_static_map_images()
     trigger_error("Generated missing static maps for all geolocations", E_USER_NOTICE);
 }
 
-function generate_static_map_image($lat, $lng, $zoom, $width = 400, $height = 300, $apiKey)
+function generate_static_map_image($lat, $lng, $zoom, $apiKey, $width = 400, $height = 300)
 {
     $url = "https://maps.googleapis.com/maps/api/staticmap?";
     $url .= "center=$lat,$lng";

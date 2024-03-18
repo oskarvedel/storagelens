@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: storagelens
- * Version: 1.0
+ * Version: 1
  */
 
 require_once dirname(__FILE__) . '/tdp-bookings/tdp-bookings-module.php';
@@ -13,7 +13,10 @@ require_once dirname(__FILE__) . '/tdp-seo-text/tdp-seo-text-module.php';
 require_once dirname(__FILE__) . '/tdp-consolidations/tdp-consolidations-module.php';
 require_once dirname(__FILE__) . '/tdp-statistics/tdp-statistics-module.php';
 require_once dirname(__FILE__) . '/tdp-unit-list/tdp-unit-list-module.php';
+require_once dirname(__FILE__) . '/geolocation-list/geolocation-list-module.php';
 require_once dirname(__FILE__) . '/common/tdp-common.php';
+require_once dirname(__FILE__) . '/common/geolocation_seo_articles.php';
+require_once dirname(__FILE__) . '/common/github_updater.php';
 
 
 // Define the activation function
@@ -48,6 +51,23 @@ function register_tdp_menu_page()
         'dashicons-admin-generic',             // Icon URL
         6                                      // Position
     );
+}
+
+if (is_admin()) { // note the use of is_admin() to double check that this is happening in the admin
+    $config = array(
+        'slug' => plugin_basename(__FILE__), // this is the slug of your plugin
+        'proper_folder_name' => 'plugin-name', // this is the name of the folder your plugin lives in
+        'api_url' => 'https://api.github.com/repos/oskarvedel/storagelens', // the GitHub API url of your GitHub repo
+        'raw_url' => 'https://raw.github.com/oskarvedel/storagelens/main', // the GitHub raw url of your GitHub repo
+        'github_url' => 'https://github.com/oskarvedel/storagelens', // the GitHub url of your GitHub repo
+        'zip_url' => 'https://github.com/oskarvedel/storagelens/zipball/main', // the zip url of the GitHub repo
+        'sslverify' => true, // whether WP should check the validity of the SSL cert when getting an update, see https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/2 and https://github.com/jkudish/WordPress-GitHub-Plugin-Updater/issues/4 for details
+        'requires' => '3.0', // which version of WordPress does your plugin require?
+        'tested' => '3.3', // which version of WordPress is your plugin tested up to?
+        'readme' => 'README.md', // which file to use as the readme for the version number
+        'access_token' => '', // Access private repositories by authorizing under Plugins > GitHub Updates when this example plugin is installed
+    );
+    new WP_GitHub_Updater($config);
 }
 
 function tdp_menu_page()
@@ -114,6 +134,12 @@ function tdp_menu_page()
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
                 <input type="hidden" name="tdp_action" value="generate_seo_texts">
                 <input type="submit" value="<?php _e('Generate SEO texts', 'textdomain'); ?>" class="button">
+            </form>
+            <!-- Generate geolocations list -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="generate_geolocation_list">
+                <input type="submit" value="<?php _e('Generate geolocations list', 'textdomain'); ?>" class="button">
             </form>
         </div>
 
@@ -229,45 +255,64 @@ function tdp_menu_page()
             </form>
         </div>
         <div class="tdp-section">
+            <!-- Import article titles -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="import_article_titles">
+                <input type="submit" value="<?php _e('Import article titles', 'textdomain'); ?>" class="button">
+            </form>
+            <!--  write_articles_for_geolocation -->
+            <form method="post" action="">
+                <?php wp_nonce_field('tdp_action_nonce'); ?>
+                <input type="hidden" name="tdp_action" value="write_articles_for_geolocation">
+                <input type="text" name="geolocation_id" placeholder="Enter geolocation ID">
+                <input type="submit" value="<?php _e('Write articles for geolocation', 'textdomain'); ?>" class="button">
+            </form>
+        </div>
+        <div class="tdp-section">
             <!-- generate chatgpt article -->
             <form method="post" action="">
                 <?php wp_nonce_field('tdp_action_nonce'); ?>
                 <input type="hidden" name="tdp_action" value="generate chatgpt article">
-                <textarea name="user_input" placeholder="Enter your text here" required rows="10" cols="50"></textarea>
+                <textarea name="prompt" placeholder="Enter your text here" required rows="10" cols="50"></textarea>
+                <input type="text" name="geolocation" placeholder="Enter geolocation">
                 <input type="submit" value="<?php _e('Generate chatgpt article', 'textdomain'); ?>" class="button">
             </form>
-
         </div>
 
 
-        <!-- style the admin page -->
-        <style>
-            .tdp-admin-wrap {
-                max-width: 800px;
-                margin: 0 auto;
-            }
 
-            .tdp-section {
-                margin-bottom: 20px;
-                padding: 10px;
-                background-color: #f9f9f9;
-                border: 1px solid #e5e5e5;
-                border-radius: 3px;
-            }
+    </div>
 
-            .tdp-section h2 {
-                margin-top: 0;
-            }
 
-            .tdp-form {
-                margin-bottom: 10px;
-            }
+    <!-- style the admin page -->
+    <style>
+        .tdp-admin-wrap {
+            max-width: 800px;
+            margin: 0 auto;
+        }
 
-            .tdp-form input[type="submit"] {
-                margin-top: 5px;
-            }
-        </style>
-    <?php
+        .tdp-section {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #e5e5e5;
+            border-radius: 3px;
+        }
+
+        .tdp-section h2 {
+            margin-top: 0;
+        }
+
+        .tdp-form {
+            margin-bottom: 10px;
+        }
+
+        .tdp-form input[type="submit"] {
+            margin-top: 5px;
+        }
+    </style>
+<?php
 
 }
 
@@ -325,6 +370,9 @@ function tdp_plugin_handle_post()
             case 'generate_seo_texts':
                 generate_seo_texts();
                 break;
+            case 'generate_geolocation_list':
+                generate_geolocation_list();
+                break;
             case 'run_all_geolocation_consolidations':
                 seo_consolidations();
                 break;
@@ -365,8 +413,16 @@ function tdp_plugin_handle_post()
                 remove_scraper_data("cityselfstorage");
                 break;
             case 'generate chatgpt article':
-                $user_input = $_POST['user_input'];
-                generate_chatgpt_seo_article($user_input);
+                $prompt = $_POST['prompt'];
+                $geolocation = $_POST['geolocation'];
+                generate_chatgpt_seo_article($prompt, $geolocation);
+            case 'import_article_titles':
+                import_article_titles();
+                break;
+            case 'write_articles_for_geolocation':
+                $geolocation_id = $_POST['geolocation_id'];
+                write_articles_for_geolocation($geolocation_id);
+                break;
             default:
         }
     }

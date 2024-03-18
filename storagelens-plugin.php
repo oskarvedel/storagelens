@@ -16,9 +16,11 @@ require_once dirname(__FILE__) . '/tdp-unit-list/tdp-unit-list-module.php';
 require_once dirname(__FILE__) . '/geolocation-list/geolocation-list-module.php';
 require_once dirname(__FILE__) . '/common/tdp-common.php';
 require_once dirname(__FILE__) . '/common/geolocation_seo_articles.php';
-require_once dirname(__FILE__) . '/common/github_updater.php';
+// include_once('updater.php');
+include_once(WP_PLUGIN_DIR . '/WordPress-GitHub-Plugin-Updater-master/updater.php');
 
-
+//include /plugins/WordPress-GitHub-Plugin-Updater-master/updater.php
+// include_once plugin_dir_path(__FILE__) . 'WordPress-GitHub-Plugin-Updater-master/updater.php';
 // Define the activation function
 function tdp_plugin_activation_function()
 {

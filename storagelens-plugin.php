@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: storagelens
- * Version: 1
+ * Version: 2
  */
 
 require_once dirname(__FILE__) . '/tdp-bookings/tdp-bookings-module.php';
@@ -72,10 +72,13 @@ if (is_admin()) { // note the use of is_admin() to double check that this is hap
 
 function tdp_menu_page()
 {
+    $plugin_data = get_plugin_data(__FILE__);
+    $plugin_version = $plugin_data['Version'];
     // Output the HTML for the admin page or include a file that does.
 ?>
     <div class="tdp-admin-wrap">
-        <h1><?php _e('TDP  Controls', 'textdomain'); ?></h1>
+        <h1><?php _e('TDP  Controls', 'textdomain'); ?> - Version <?php echo $plugin_version; ?></h1>
+
 
         <div class="tdp-section">
             <h2><?php _e('Data Generation', 'textdomain'); ?></h2>

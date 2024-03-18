@@ -2,7 +2,7 @@
 
 /**
  * Plugin Name: storagelens
- * Version: 4
+ * Version: 5.0
  */
 
 require_once dirname(__FILE__) . '/tdp-bookings/tdp-bookings-module.php';

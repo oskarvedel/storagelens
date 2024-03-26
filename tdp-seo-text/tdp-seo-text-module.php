@@ -29,7 +29,7 @@ function set_lokation_archive_meta_titles()
         if (!empty($meta_title)) {
             return $meta_title;
         } else {
-            return 'Alle opbevaringsrum og depotrum i Danmark';
+            return 'Søg på +10282 depotrum hos 294 lagerhoteller i hele Danmark';
         }
     }
 }
@@ -43,7 +43,7 @@ function set_lokation_archive_meta_descriptions()
         if (!empty($meta_description)) {
             echo '<meta name="description" content="' . esc_attr($meta_description) . '">';
         } else {
-            echo '<meta name="description" content="Alle opbevaringsrum og depotrum i Danmark ✓ Søg og book opbevaring og depotrum ✓ Stort udvalg af opbevaringsrum ✓ Sammenlign priser ➡ Find den bedste løsning.">';
+            echo '<meta name="description" content="Søg og book ALLE opbevaringsrum og depotrum i Danmark  ✓ 54352 m² / 123190 m³ til rådighed lige nu ✓ Sammenlign priser ➡ Find den bedste løsning">';
         }
     }
 }

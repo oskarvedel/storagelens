@@ -217,12 +217,12 @@ function generate_unit_list($finalOutput, $partner, $lokationId, $available_unit
 
 function generate_view_all_button($permalink, $partner, $num_of_available_units, $gd_place_title, $isArchivePage = 0)
 {
-    // if ($isArchivePage && $partner) {
-    if ($num_of_available_units > 8) {
-        $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ' . $num_of_available_units . ' ledige rum hos ' . $gd_place_title . '</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
-        // } else {
-        //     $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ledige rum</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
-        // }
+    if ($isArchivePage && $partner) {
+        if ($num_of_available_units > 8) {
+            $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ' . $num_of_available_units . ' ledige rum hos ' . $gd_place_title . '</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
+        } else {
+            $finalOutput = '<a  href="' . $permalink . '"><div class="view-all-row yellowhover"><p class="view-all">Se alle ledige rum</p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="22" height="22"><path d="M7.293 4.707 14.586 12l-7.293 7.293 1.414 1.414L17.414 12 8.707 3.293 7.293 4.707z" /></svg></div></a>';
+        }
         return $finalOutput;
     } else {
         return '';
